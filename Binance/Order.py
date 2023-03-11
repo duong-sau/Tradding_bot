@@ -1,6 +1,8 @@
 import sys
 import time
 
+from PyQt5.QtWidgets import QMessageBox
+
 
 def inflect_side(side):
     if side == "BUY":
@@ -13,28 +15,18 @@ class COrder:
     def __init__(self, client):
         self.client = client
 
-    def open_position(self, symbol, side, quantity, margin):
+    def open_order(self, symbol, quantity, price, stop_loss, take_profit, margin, side):
         try:
             self.client.futures_change_leverage(symbol=symbol, leverage=margin, timestamp=time.time())
-            position = self.client.futures_create_order(
-                symbol=symbol,
-                side=side,
-                quantity=quantity,
-                type='MARKET',
-                leverage=margin,
-                newOrderRespType="FULL",
-                timestamp=time.time()
-            )
-            print(position)
-        except Exception:
-            print(sys.exc_info()[1])
-
-    def open_order(self, symbol, quantity, price, stop_loss, take_profit, side):
-        try:
             limit_order = self.client.futures_create_order(
                 symbol=symbol,
                 side=side,
+
+
+
+
                 price=price,
+                leverage=margin,
                 quantity=quantity,
                 type='LIMIT',
                 timeInForce='GTC',
@@ -61,4 +53,8 @@ class COrder:
             )
             print(limit_order, stop_loss_order, take_profit_order)
         except Exception:
-            print(sys.exc_info()[1])
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setWindowTitle("Lỗi")
+            msg.setText(sys.exc_info())
+            msg.exec_()

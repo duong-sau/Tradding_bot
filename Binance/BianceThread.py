@@ -16,12 +16,13 @@ class CBinanceThread(QThread):
     def __init__(self):
         super(CBinanceThread, self).__init__()
         self.running = True
+        self.symbol = 'BTCUSDT'
         self.client = Client(api_key, api_secret, testnet=True)
 
     def run(self):
         while self.running:
             self.test_connection()
-            self.update_price('BTCBUSD')
+            self.update_price()
             time.sleep(1)
 
     def stop(self):
@@ -42,15 +43,18 @@ class CBinanceThread(QThread):
             symbol_names.append(symbol_name)
         self.set_symbols_signal.emit(symbol_names)
 
-    def update_price(self, symbol):
-        ticker = self.client.get_avg_price(symbol=symbol)
-        price = ticker['price']
+    def update_price(self):
+        ticker = self.client.futures_mark_price(symbol=self.symbol)
+        price = ticker['markPrice']
         self.update_price_signal.emit(price)
+
+    @QtCore.pyqtSlot(str)
+    def update_symbol(self, symbol):
+        self.symbol = symbol
 
     @QtCore.pyqtSlot(list)
     def open_order(self, datas):
         for data in datas:
             symbol, quantity, price, stop_loss, take_profit, margin, side = data
             order = COrder(self.client)
-            order.open_position(symbol, side, quantity, margin)
-            order.open_order(symbol, quantity, price, stop_loss, take_profit, side)
+            order.open_order(symbol, quantity, price, stop_loss, take_profit,margin, side)

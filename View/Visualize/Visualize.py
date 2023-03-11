@@ -1,10 +1,10 @@
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QComboBox, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QComboBox, QHBoxLayout
 
 from View.Visualize.Price import PriceLabel
 
 
 class Visualize(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, update_symbol_function, parent=None):
         super(Visualize, self).__init__(parent)
 
         # Tạo price label
@@ -14,7 +14,7 @@ class Visualize(QWidget):
         layout = QHBoxLayout()
         layout.addWidget(self.price_label)
         layout.addWidget(self.symbol_select)
-
+        self.symbol_select.currentTextChanged.connect(update_symbol_function)
         # Đặt layout cho visualize widget
         self.setLayout(layout)
 

@@ -12,6 +12,7 @@ from View._Common.Button.Button import Button
 
 class MainWindow(QMainWindow):
     open_order_signal = pyqtSignal(tuple)
+    update_symbol_signal = pyqtSignal(str)
 
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
@@ -30,7 +31,7 @@ class MainWindow(QMainWindow):
         # controller
         self.g_box = QGroupBox()
         self.control_layout = QHBoxLayout()
-        self.visualize = Visualize()
+        self.visualize = Visualize(self.update_symbol)
         self.long_button = Button(" LONG ", '#00FF00')
         self.short_button = Button(" SHORT ", '#FF0000')
         self.control_layout.addWidget(self.visualize)
@@ -79,6 +80,10 @@ class MainWindow(QMainWindow):
     @QtCore.pyqtSlot(list)
     def set_symbols(self, symbol_names):
         self.visualize.set_symbols(symbol_names)
+
+    @QtCore.pyqtSlot(str)
+    def update_symbol(self, symbol):
+        self.update_symbol_signal.emit(symbol)
 
     def get_value(self):
         return self.budget.get_value(), self.order.get_value(), self.profit_loss.get_value(), self.visualize.get_value()

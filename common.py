@@ -7,11 +7,18 @@ probability_list = [uFIBONACCI, dFIBONACCI, NORMAL]
 
 def make_normal(min_val, max_val, counter):
     normal_list = normal(counter)
-    result = distribution(normal_list, max_val - min_val)
+    result = distribution(normal_list, min_val, max_val)
     return result
 
 
-def make_fibonacci(min_val, max_val, counter):
+def make_u_fibonacci(min_val, max_val, counter):
+    fibonacci_list = fibonacci(counter)
+    fibonacci_list.reverse()
+    result = distribution(fibonacci_list, min_val, max_val)
+    return result
+
+
+def make_d_fibonacci(min_val, max_val, counter):
     fibonacci_list = fibonacci(counter)
     result = distribution(fibonacci_list, min_val, max_val)
     return result
@@ -46,8 +53,8 @@ def math_fibonacci(n):
 
 
 math_dict = {
-    uFIBONACCI: make_fibonacci,
-    dFIBONACCI: make_fibonacci,
+    uFIBONACCI: make_u_fibonacci,
+    dFIBONACCI: make_d_fibonacci,
     NORMAL: make_normal
 }
 

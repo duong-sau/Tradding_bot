@@ -9,3 +9,6 @@ def register_connections(binance_thread, logic_thread, main_view):
 
     # symbol
     binance_thread.set_symbols_signal.connect(main_view.set_symbols)
+
+    # symbol
+    main_view.update_symbol_signal.connect(binance_thread.update_symbol)
