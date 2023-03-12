@@ -21,10 +21,6 @@ class COrder:
             limit_order = self.client.futures_create_order(
                 symbol=symbol,
                 side=side,
-
-
-
-
                 price=price,
                 leverage=margin,
                 quantity=quantity,
@@ -37,6 +33,7 @@ class COrder:
                 symbol=symbol,
                 side=inflect_side(side),
                 quantity=quantity,
+                reduceOnly=True,
                 stopPrice=stop_loss,
                 type='STOP_MARKET',
                 newOrderRespType="ACK",
@@ -47,6 +44,7 @@ class COrder:
                 side=inflect_side(side),
                 quantity=quantity,
                 stopPrice=take_profit,
+                reduceOnly=True,
                 type='TAKE_PROFIT_MARKET',
                 newOrderRespType="ACK",
                 timestamp=time.time()
@@ -56,5 +54,5 @@ class COrder:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
             msg.setWindowTitle("Lỗi")
-            msg.setText(sys.exc_info())
+            msg.setText(sys.exc_info()[1])
             msg.exec_()
