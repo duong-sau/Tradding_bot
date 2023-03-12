@@ -6,7 +6,10 @@ from binance.client import Client
 from binance.exceptions import BinanceRequestException, BinanceAPIException
 
 from Binance import api_key, api_secret
-from Binance.Order import COrder
+from Binance.Common import get_limit_from_parameter
+
+from Binance.OTOListener import OTOListener
+from View._Common.MsgBox import msg_box
 
 
 class CBinanceThread(QThread):
@@ -15,6 +18,7 @@ class CBinanceThread(QThread):
 
     def __init__(self):
         super(CBinanceThread, self).__init__()
+        self.position_list = []
         self.running = True
         self.symbol = 'BTCUSDT'
         self.client = Client(api_key, api_secret, testnet=True)
@@ -32,7 +36,7 @@ class CBinanceThread(QThread):
         try:
             self.client.ping()
         except (BinanceRequestException, BinanceAPIException):
-            print("Ping failed!")
+            msg_box('Không thể kết nối đến server')
 
     def set_symbols(self):
         exchange_info = self.client.get_exchange_info()
@@ -48,6 +52,14 @@ class CBinanceThread(QThread):
         price = ticker['markPrice']
         self.update_price_signal.emit(price)
 
+    def remove_position(self, position):
+        self.position_list.remove(position)
+
+    @QtCore.pyqtSlot(dict)
+    def handle_socket_event(self, msg):
+        for position in self.position_list:
+            position.handle(msg)
+
     @QtCore.pyqtSlot(str)
     def update_symbol(self, symbol):
         self.symbol = symbol
@@ -56,5 +68,7 @@ class CBinanceThread(QThread):
     def open_order(self, datas):
         for data in datas:
             symbol, quantity, price, stop_loss, take_profit, margin, side = data
-            order = COrder(self.client)
-            order.open_order(symbol, quantity, price, stop_loss, take_profit,margin, side)
+            parameter = get_limit_from_parameter(symbol, quantity, price, margin, side)
+            position = OTOListener(self.client, self.remove_position, parameter, stop_loss, take_profit)
+            self.position_list.append(position)
+            position.make_limit_order()

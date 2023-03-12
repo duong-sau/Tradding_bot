@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QApplication
 from qt_material import apply_stylesheet
 
 from Binance.BianceThread import CBinanceThread
+from Binance.WebSocketThread import CSocketThread
 from Logic.CLogicThread import CLogicThread
 from View.MainView import MainWindow
 from connection import register_connections
@@ -18,15 +19,21 @@ if __name__ == '__main__':
     # binance thread
     binance_thread = CBinanceThread()
 
+    # socket thread
+    socket_thread = CSocketThread()
+
     # Window thread
     mainWindow = MainWindow()
 
     try:
         # connection
-        register_connections(binance_thread, logic_thread, mainWindow)
+        register_connections(binance_thread, logic_thread, socket_thread, mainWindow)
 
         logic_thread.start()
         binance_thread.start()
+        socket_thread.start()
+
+        # View
         mainWindow.show()
         binance_thread.set_symbols()
 
@@ -37,6 +44,7 @@ if __name__ == '__main__':
         # stop
         binance_thread.stop()
         logic_thread.stop()
+        socket_thread.stop()
 
         # exit
         app.exit(0)
