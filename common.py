@@ -42,7 +42,7 @@ def fibonacci(n):
     if n == 1:
         return [1]
     else:
-        return math_fibonacci(n + 1)[1:]
+        return math_fibonacci(n + 2)[2:]
 
 
 def math_fibonacci(n):

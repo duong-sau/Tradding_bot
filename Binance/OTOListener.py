@@ -85,11 +85,11 @@ class OTOListener:
     def cancel_stop_loss_order(self):
         self.client.futures_cancel_order(
             symbol=self.stop_loss_order['symbol'],
-            orderId=self.stop_loss_order['clientOrderId']
+            orderId=self.stop_loss_order['orderId']
         )
 
     def cancel_take_profit_order(self):
         self.client.futures_cancel_order(
             symbol=self.take_profit_order['symbol'],
-            orderId=self.take_profit_order['clientOrderId']
+            orderId=self.take_profit_order['orderId']
         )

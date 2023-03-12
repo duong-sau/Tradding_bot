@@ -1,5 +1,11 @@
 import exrex
 
+from binance.helpers import round_step_size
+
+
+def get_rounded_price(price: float) -> float:
+    return round_step_size(price, 0.10)
+
 
 def inflect_side(side):
     if side == "BUY":
@@ -10,11 +16,12 @@ def inflect_side(side):
 
 def get_limit_from_parameter(symbol, quantity, price, margin, side):
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
+    price = get_rounded_price(price)
     order_param = {
         'symbol': symbol,
         'side': side,
-        'price': price,
-        'quantity': quantity,
+        'price': float(round(price, 2)),
+        'quantity': float(round(quantity, 3)),
         'leverage': margin,
         'type': 'LIMIT',
         'newClientOrderId': order_id,
@@ -28,11 +35,12 @@ def get_limit_from_parameter(symbol, quantity, price, margin, side):
 def get_stop_loss_form_limit(limit_order, stop_loss):
     limit_side = limit_order['side']
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
+    stop_loss= get_rounded_price(stop_loss)
     order_param = {
         'symbol': limit_order['symbol'],
         'side': inflect_side(limit_side),
         'quantity': limit_order['origQty'],
-        'stopPrice': stop_loss,
+        'stopPrice': float(round(stop_loss, 2)),
         'newClientOrderId': order_id,
         'reduceOnly': True,
         'type': 'STOP_MARKET',
@@ -44,11 +52,12 @@ def get_stop_loss_form_limit(limit_order, stop_loss):
 def get_take_profit_form_limit(limit_order, take_profit):
     limit_side = limit_order['side']
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
+    take_profit = get_rounded_price(take_profit)
     order_param = {
         'symbol': limit_order['symbol'],
         'side': inflect_side(limit_side),
         'quantity': limit_order['origQty'],
-        'stopPrice': take_profit,
+        'stopPrice': float(round(take_profit, 2)),
         'newClientOrderId': order_id,
         'reduceOnly': True,
         'type': 'TAKE_PROFIT_MARKET',
