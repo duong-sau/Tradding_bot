@@ -1,6 +1,5 @@
 import re
 
-
 from View._Common.TextBox.TextBox import TextBox
 from common import string_to_float_list
 

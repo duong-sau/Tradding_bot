@@ -1,8 +1,16 @@
 uFIBONACCI = "+Fibonacci"
 dFIBONACCI = "-Fibonacci"
 NORMAL = "Normal"
+DISTANCE = 'Distance'
 
-probability_list = [uFIBONACCI, dFIBONACCI, NORMAL]
+probability_list_m = [uFIBONACCI, dFIBONACCI, NORMAL]
+probability_list_n = [uFIBONACCI, dFIBONACCI, DISTANCE]
+
+
+def make_distance(min_val, max_val, counter):
+    distance_list = distance(counter)
+    result = distribution(distance_list, min_val, max_val)
+    return result
 
 
 def make_normal(min_val, max_val, counter):
@@ -34,6 +42,10 @@ def distribution(list_p, min_val, max_val):
     return round_values
 
 
+def distance(n):
+    return [i for i in range(n)]
+
+
 def normal(n):
     return [1 for i in range(n)]
 
@@ -55,7 +67,8 @@ def math_fibonacci(n):
 math_dict = {
     uFIBONACCI: make_u_fibonacci,
     dFIBONACCI: make_d_fibonacci,
-    NORMAL: make_normal
+    NORMAL: make_normal,
+    DISTANCE: make_distance
 }
 
 

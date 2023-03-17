@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from View.Order.OrderRange import COrderRange
 from View._Common.Allocator import Allocator
-from View._Common.TextBox.FloatTextBox import FloatTextBox
 from View._Common.TextBox.IntTextBox import IntTextBox
 
 

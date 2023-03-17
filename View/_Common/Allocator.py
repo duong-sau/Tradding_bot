@@ -1,9 +1,8 @@
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QComboBox, QVBoxLayout
 
 from View._Common.Label.Label import AllocatorLabel
 from View._Common.TextBox.AllocatorTextBox import AllocatorTextBox
-from common import probability_list, auto_complete
+from common import probability_list_m, auto_complete
 
 
 class Allocator(QWidget):
@@ -12,7 +11,7 @@ class Allocator(QWidget):
 
         # Create widgets
         self.allocation_select_list = QComboBox()
-        for probability in probability_list:
+        for probability in probability_list_m:
             self.allocation_select_list.addItem(probability)
 
         self.allocation_textbox = AllocatorTextBox(title, placeholder)

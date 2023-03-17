@@ -1,7 +1,4 @@
-import typing
-
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 
 class VWidget(QWidget):

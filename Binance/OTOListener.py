@@ -1,6 +1,5 @@
 import sys
 
-import exrex
 from binance.exceptions import BinanceRequestException, BinanceAPIException
 
 from Binance.Common import get_stop_loss_form_limit, get_take_profit_form_limit

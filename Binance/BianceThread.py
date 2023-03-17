@@ -7,7 +7,6 @@ from binance.exceptions import BinanceRequestException, BinanceAPIException
 
 from Binance import api_key, api_secret
 from Binance.Common import get_limit_from_parameter
-
 from Binance.OTOListener import OTOListener
 from View._Common.MsgBox import msg_box
 

@@ -1,6 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from View._Common.Allocator import Allocator
 from View._Common.TextBox.FloatTextBox import FloatTextBox
 
 

@@ -1,8 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
-from View._Common.Allocator import Allocator
 from View._Common.Button.Button import Button
-from View._Common.TextBox.FloatTextBox import FloatTextBox
 
 
 class ControlView(QWidget):
