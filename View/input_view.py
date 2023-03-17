@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
+from View._Common.HWidget import HWidget
 from View._Common.TextBox.FloatTextBox import FloatTextBox
+from View._Common.VWidget import VWidget
 
 
 class InputView(QWidget):
@@ -8,14 +10,12 @@ class InputView(QWidget):
         super(InputView, self).__init__(parent)
 
         self.m_textbox = FloatTextBox('Số lượng tiền, đơn vị USD', 'M')
-        self.n_textbox = FloatTextBox('Số lệnh', 'n')
-        input_l = QVBoxLayout()
-        input_l.addWidget(self.m_textbox)
-        input_l.addWidget(self.n_textbox)
-        input_w = QWidget()
+        self.n_textbox = FloatTextBox('Số lệnh                         ', 'n')
+        self.input_w = VWidget(self.m_textbox, self.n_textbox)
 
         self.min_textbox = FloatTextBox('Min', 'M')
         self.max_textbox = FloatTextBox('Max', 'n')
+        self.min_max_w = HWidget(self.min_textbox, self.max_textbox)
 
         self.create_widgets()
         self.create_connection()
@@ -26,19 +26,9 @@ class InputView(QWidget):
 
     def create_layout(self):
         layout = QVBoxLayout()
-        layout.addWidget(self.m_textbox)
-        layout.addWidget(self.n_textbox)
+        layout.addWidget(self.input_w)
+        layout.addWidget(self.min_max_w)
         self.setLayout(layout)
-
 
     def create_connection(self):
         return
-        # self.quantity_textbox.textbox.textChanged.connect(
-        #     lambda: self.allocation_textbox.update_hint_text(self.get_hint_value()))
-        # self.order.counter_textbox.textbox.textChanged.connect(
-        #     lambda: self.allocation_textbox.update_hint_text(self.get_hint_value()))
-        # self.allocation_textbox.allocation_textbox.textbox.textChanged.connect(
-        #     lambda: self.allocation_textbox.update_hint_text(self.get_hint_value()))
-        # self.allocation_textbox.allocation_select_list.currentTextChanged.connect(
-        #     lambda: self.allocation_textbox.update_hint_text(self.get_hint_value()))
-        # Connect counter_value_changed signal from Order to update_counter slot in Budget

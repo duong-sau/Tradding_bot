@@ -11,38 +11,41 @@ from View.symbol_view import SymbolView
 
 
 class MainWindow(QMainWindow):
-    open_order_signal = pyqtSignal(tuple)
+    open_order_signal = pyqtSignal(dict)
     update_symbol_signal = pyqtSignal(str)
 
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
-        #
-        #     # Widget
-        #     self.order = COrder()
-        #     self.budget = CBudget(self.order)
-        #     self.profit_loss = CProfitLoss()
-        #
-        #     self.splitter = QSplitter()
-        #     self.splitter.addWidget(self.budget)
-        #     self.splitter.addWidget(self.order)
-        #     self.splitter.addWidget(self.profit_loss)
-        #     self.splitter.setSizes([200, 200, 100])
-        #
-        #     # controller
-        #     self.g_box = QGroupBox()
-        #     self.control_layout = QHBoxLayout()
-        #     self.visualize = Visualize(self.update_symbol)
 
-        #     self.control_layout.addWidget(self.visualize)
-        #     self.control_layout.addWidget(self.long_button)
-        #     self.control_layout.addWidget(self.short_button)
-        #     self.g_box.setLayout(self.control_layout)
         self.input_view = InputView()
+        self.m_textbox = self.input_view.m_textbox
+        self.n_textbox = self.input_view.n_textbox
+        self.min_textbox = self.input_view.n_textbox
+        self.max_textbox = self.input_view.max_textbox
+
         self.combobox_view = ComboboxView()
+        self.m_combobox = self.combobox_view.m_combobox
+        self.n_combobox = self.combobox_view.n_combobox
+        self.margin_textbox = self.combobox_view.margin_input
+
         self.advance_view = AdvanceView()
+        self.stop_loss_textbox = self.advance_view.stop_loss_textbox
+        self.take_profit1_textbox = self.advance_view.take_profit1_textbox
+        self.take_profit2_textbox = self.advance_view.take_profit2_textbox
+
         self.control_view = ControlView()
+        self.long_button = self.control_view.long_button
+        self.short_button = self.control_view.short_button
+
         self.pnl_view = PNLView()
+        self.l_textbox = self.pnl_view.l_textbox
+        self.r_x_textbox = self.pnl_view.r_x_textbox
+        self.pnl_textbox = self.pnl_view.pnl_textbox
+
         self.symbol_view = SymbolView()
+        self.price_label = self.symbol_view.price_label
+        self.symbol_select = self.symbol_view.symbol_select
+
         self.create_view()
         self.create_layout()
         self.setup_connections()
@@ -52,17 +55,13 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Trading Bot')
 
     def create_layout(self):
-        # layout
-        # layout = QVBoxLayout()
-        # layout.addWidget(self.splitter)
-        # layout.addWidget(self.g_box)
         layout = QGridLayout()
-        layout.addWidget(self.input_view, 0, 0, 4, 2)
-        layout.addWidget(self.advance_view, 5, 0, 3, 2)
-        layout.addWidget(self.combobox_view, 0, 2, 4, 1)
-        layout.addWidget(self.pnl_view, 5, 2, 3, 1)
-        layout.addWidget(self.control_view, 8, 0, 1, 2)
-        layout.addWidget(self.symbol_view, 8, 2, 1, 1)
+        layout.addWidget(self.input_view, 0, 0, 4, 4)
+        layout.addWidget(self.advance_view, 5, 0, 3, 4)
+        layout.addWidget(self.combobox_view, 0, 4, 4, 2)
+        layout.addWidget(self.pnl_view, 5, 4, 3, 2)
+        layout.addWidget(self.control_view, 8, 0, 1, 4)
+        layout.addWidget(self.symbol_view, 8, 4, 1, 2)
 
         # main widget
         central_widget = QWidget()
@@ -70,9 +69,9 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
 
     def setup_connections(self):
-        return
-        # self.long_button.clicked.connect(self.open_long)
-        # self.short_button.clicked.connect(self.open_short)
+        self.long_button.clicked.connect(self.open_long)
+        self.short_button.clicked.connect(self.open_short)
+        self.symbol_select.currentTextChanged.connect(self.update_symbol)
 
     @QtCore.pyqtSlot()
     def open_long(self):
@@ -86,18 +85,27 @@ class MainWindow(QMainWindow):
 
     @QtCore.pyqtSlot(str)
     def update_price(self, price):
-        return
-        self.visualize.update_price(price)
+        self.price_label.setText(price)
 
     @QtCore.pyqtSlot(list)
     def set_symbols(self, symbol_names):
-        return
-        self.visualize.set_symbols(symbol_names)
+        self.symbol_select.addItems(symbol_names)
 
     @QtCore.pyqtSlot(str)
     def update_symbol(self, symbol):
-        return
         self.update_symbol_signal.emit(symbol)
 
     def get_value(self):
-        return self.budget.get_value(), self.order.get_value(), self.profit_loss.get_value(), self.visualize.get_value()
+        data = {
+            'M': self.m_textbox.get_value(),
+            'n': self.n_textbox.get_value(),
+            'min': self.min_textbox.get_value(),
+            'max': self.max_textbox.get_value(),
+            'sl': self.stop_loss_textbox.get_value(),
+            'tp1': self.take_profit1_textbox.get_value(),
+            'tp2': self.take_profit2_textbox.get_value(),
+            'm_': self.m_combobox.currentText(),
+            'n_': self.n_combobox.currentText(),
+            'margin': self.margin_textbox.get_value()
+        }
+        return data

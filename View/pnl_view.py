@@ -7,9 +7,9 @@ from View._Common.TextBox.FloatTextBox import FloatTextBox
 class PNLView(QWidget):
     def __init__(self, parent=None):
         super(PNLView, self).__init__(parent)
-        self.stop_loss_textbox = FloatTextBox('Giá thanh lý', 'giá')
-        self.take_profit1_textbox = FloatTextBox('Margin đề xuất', 'giá')
-        self.take_profit2_textbox = FloatTextBox('PNL luỹ kế', 'giá')
+        self.l_textbox = FloatTextBox('Giá thanh lý', 'giá')
+        self.r_x_textbox = FloatTextBox('Margin đề xuất', 'giá')
+        self.pnl_textbox = FloatTextBox('PNL luỹ kế', 'giá')
         self.create_widgets()
         self.create_connection()
         self.create_layout()
@@ -19,17 +19,17 @@ class PNLView(QWidget):
 
     def create_layout(self):
         layout = QVBoxLayout()
-        layout.addWidget(self.stop_loss_textbox)
-        layout.addWidget(self.take_profit1_textbox)
-        layout.addWidget(self.take_profit2_textbox)
+        layout.addWidget(self.l_textbox)
+        layout.addWidget(self.r_x_textbox)
+        layout.addWidget(self.pnl_textbox)
         self.setLayout(layout)
 
     def get_value(self):
-        return self.take_profit1_textbox.get_value()
+        return self.r_x_textbox.get_value()
 
     def get_hint_value(self):
         counter = self.order.counter_textbox.get_value()
-        max_val = self.stop_loss_textbox.get_value()
+        max_val = self.l_textbox.get_value()
         return 0, max_val, counter
 
     def create_connection(self):

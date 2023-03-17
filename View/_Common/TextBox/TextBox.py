@@ -13,6 +13,9 @@ class TextBox(QWidget):
         layout = QHBoxLayout()
         layout.addWidget(self.label)
         layout.addWidget(self.textbox)
+        layout.setStretchFactor(self.label, 1)
+        layout.setStretchFactor(self.textbox, 2)
+
         self.setLayout(layout)
         self.set_validator()
 
