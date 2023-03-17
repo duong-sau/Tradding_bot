@@ -1,7 +1,7 @@
 import time
 
-from PyQt6 import QtCore
-from PyQt6.QtCore import pyqtSignal, QThread
+from PyQt5 import QtCore
+from PyQt5.QtCore import pyqtSignal, QThread
 from binance.client import Client
 from binance.exceptions import BinanceRequestException, BinanceAPIException
 

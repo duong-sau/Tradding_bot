@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QComboBox, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QComboBox, QHBoxLayout
 
 from View.Visualize.Price import PriceLabel
 
@@ -8,8 +8,6 @@ class Visualize(QWidget):
         super(Visualize, self).__init__(parent)
 
         # Tạo price label
-        self.price_label = PriceLabel('Price')
-        self.symbol_select = QComboBox()
         # Tạo layout
         layout = QHBoxLayout()
         layout.addWidget(self.price_label)

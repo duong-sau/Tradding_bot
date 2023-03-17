@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QHBoxLayout, QWidget
+from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
 from View._Common.TextBox.FloatTextBox import FloatTextBox
 from View._Common.TextBox.IntTextBox import IntTextBox

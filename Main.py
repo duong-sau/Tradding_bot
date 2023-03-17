@@ -1,7 +1,7 @@
 import sys
 import traceback
 
-from PyQt6.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication
 from qt_material import apply_stylesheet
 
 from Binance.BianceThread import CBinanceThread

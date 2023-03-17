@@ -1,5 +1,5 @@
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QComboBox, QVBoxLayout
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QComboBox, QVBoxLayout
 
 from View._Common.Label.Label import AllocatorLabel
 from View._Common.TextBox.AllocatorTextBox import AllocatorTextBox

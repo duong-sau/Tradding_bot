@@ -64,19 +64,6 @@
      <property name="text">
       <string>Phân bố M</string>
      </property>
-     <property name="buddy">
-      <cstring>m_allocator_input</cstring>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="m_allocator_input">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>40</y>
-       <width>220</width>
-       <height>31</height>
-      </rect>
-     </property>
     </widget>
     <widget class="QLabel" name="n_allocator">
      <property name="geometry">
@@ -89,19 +76,6 @@
      </property>
      <property name="text">
       <string>Phân bố n</string>
-     </property>
-     <property name="buddy">
-      <cstring>n_allocator_input</cstring>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="n_allocator_input">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>130</y>
-       <width>220</width>
-       <height>31</height>
-      </rect>
      </property>
     </widget>
     <widget class="QLabel" name="margin">
@@ -129,6 +103,66 @@
        <height>31</height>
       </rect>
      </property>
+    </widget>
+    <widget class="QComboBox" name="m_combobox">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>40</y>
+       <width>221</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>+ Fibonacci</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>- Fibonacci</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Normal</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string/>
+      </property>
+     </item>
+    </widget>
+    <widget class="QComboBox" name="n_combobox">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>110</y>
+       <width>221</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>+ Fibonacci</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>- Fibonacci</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Normal</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string/>
+      </property>
+     </item>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
@@ -328,8 +362,8 @@
     <widget class="QLabel" name="n">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>91</y>
+       <x>30</x>
+       <y>110</y>
        <width>180</width>
        <height>31</height>
       </rect>
@@ -345,7 +379,7 @@
      <property name="geometry">
       <rect>
        <x>250</x>
-       <y>90</y>
+       <y>120</y>
        <width>350</width>
        <height>31</height>
       </rect>
@@ -531,8 +565,6 @@
   <tabstop>take_profit_1_percent_input</tabstop>
   <tabstop>take_profit_2_price_input</tabstop>
   <tabstop>take_profit_2_percent_input</tabstop>
-  <tabstop>m_allocator_input</tabstop>
-  <tabstop>n_allocator_input</tabstop>
   <tabstop>margin_input</tabstop>
   <tabstop>g_t_l_input</tabstop>
   <tabstop>g_d_x_input</tabstop>
@@ -542,40 +574,7 @@
   <tabstop>symbol_combobox</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>long_button</sender>
-   <signal>clicked()</signal>
-   <receiver>main_view</receiver>
-   <slot>open_long()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>210</x>
-     <y>578</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>245</x>
-     <y>640</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>short_button</sender>
-   <signal>clicked()</signal>
-   <receiver>main_view</receiver>
-   <slot>open_short()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>443</x>
-     <y>586</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>335</x>
-     <y>640</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>open_long()</slot>
   <slot>open_short()</slot>

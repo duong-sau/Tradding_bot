@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox
 
 
 def check_val_data(data, msg_box):

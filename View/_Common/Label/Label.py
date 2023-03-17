@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QLabel
+from PyQt5.QtWidgets import QLabel
 
 from common import string_to_float_list
 

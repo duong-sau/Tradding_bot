@@ -1,22 +1,25 @@
-from PyQt6.QtWidgets import QGroupBox, QLineEdit, QVBoxLayout
+from PyQt5.QtCore import QRegExp
+from PyQt5.QtGui import QRegExpValidator
+from PyQt5.QtWidgets import QLineEdit, QHBoxLayout, QWidget, QLabel
 
 
-class TextBox(QGroupBox):
+class TextBox(QWidget):
     def __init__(self, title, placeholder, parent=None):
         super(TextBox, self).__init__(parent)
-        self.setTitle(title)
+        self.label = QLabel(title)
         self.textbox = QLineEdit(self)
         self.textbox.setPlaceholderText(placeholder)
 
-        layout = QVBoxLayout()
+        layout = QHBoxLayout()
+        layout.addWidget(self.label)
         layout.addWidget(self.textbox)
         self.setLayout(layout)
         self.set_validator()
 
     def set_validator(self):
-        # regex = QRegExp("[0-9,\\s]*")
-        # validator = QRegExpValidator(regex)
-        # self.textbox.setValidator(validator)
+        regex = QRegExp("[0-9,\\s]*")
+        validator = QRegExpValidator(regex)
+        self.textbox.setValidator(validator)
         return
 
     def set_string_validator(self, validator):

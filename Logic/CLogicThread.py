@@ -1,7 +1,7 @@
 import time
 
-from PyQt6 import QtCore
-from PyQt6.QtCore import QThread, pyqtSignal
+from PyQt5 import QtCore
+from PyQt5.QtCore import QThread, pyqtSignal
 
 from Logic.ProcessData import process
 

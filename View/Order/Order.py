@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from View.Order.OrderRange import COrderRange
 from View._Common.Allocator import Allocator
