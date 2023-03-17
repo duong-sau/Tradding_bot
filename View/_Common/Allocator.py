@@ -1,5 +1,5 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QComboBox, QVBoxLayout
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QWidget, QComboBox, QVBoxLayout
 
 from View._Common.Label.Label import AllocatorLabel
 from View._Common.TextBox.AllocatorTextBox import AllocatorTextBox
@@ -17,7 +17,6 @@ class Allocator(QWidget):
 
         self.allocation_textbox = AllocatorTextBox(title, placeholder)
         self.allocation_hint_label = AllocatorLabel('Tạm tính')
-        self.allocation_hint_label.setAlignment(Qt.AlignRight)
 
         # Create layout
         layout = QVBoxLayout()

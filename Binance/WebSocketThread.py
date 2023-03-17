@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt6.QtCore import QThread, pyqtSignal
 from binance import ThreadedWebsocketManager
 
 from Binance import api_key, api_secret

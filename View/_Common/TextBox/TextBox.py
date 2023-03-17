@@ -1,6 +1,4 @@
-from PyQt5.QtCore import QRegExp
-from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QGroupBox, QLineEdit, QVBoxLayout
+from PyQt6.QtWidgets import QGroupBox, QLineEdit, QVBoxLayout
 
 
 class TextBox(QGroupBox):
@@ -16,9 +14,10 @@ class TextBox(QGroupBox):
         self.set_validator()
 
     def set_validator(self):
-        regex = QRegExp("[0-9,\\s]*")
-        validator = QRegExpValidator(regex)
-        self.textbox.setValidator(validator)
+        # regex = QRegExp("[0-9,\\s]*")
+        # validator = QRegExpValidator(regex)
+        # self.textbox.setValidator(validator)
+        return
 
     def set_string_validator(self, validator):
         regex = QRegExp(validator)

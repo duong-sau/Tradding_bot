@@ -1,5 +1,4 @@
-from PyQt5.QtCore import QRegExp
-from PyQt5.QtGui import QRegExpValidator
+
 
 from View._Common.TextBox.TextBox import TextBox
 
@@ -9,9 +8,10 @@ class FloatTextBox(TextBox):
         super(FloatTextBox, self).__init__(title, placeholder, parent)
 
     def set_validator(self):
-        regex = QRegExp(r"([0-9]*[.])?[0-9]+")
-        validator = QRegExpValidator(regex)
-        self.textbox.setValidator(validator)
+        # regex = QRegExp(r"([0-9]*[.])?[0-9]+")
+        # validator = QRegExpValidator(regex)
+        # self.textbox.setValidator(validator)
+        return
 
     def get_value(self):
         text = self.textbox.text()

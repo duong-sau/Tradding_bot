@@ -1,7 +1,7 @@
 import sys
 import traceback
 
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication
 from qt_material import apply_stylesheet
 
 from Binance.BianceThread import CBinanceThread
@@ -48,4 +48,4 @@ if __name__ == '__main__':
 
         # exit
         app.exit(0)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

@@ -1,6 +1,6 @@
-from PyQt5 import QtCore
-from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QSplitter, QHBoxLayout, QGroupBox
+from PyQt6 import QtCore
+from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QSplitter, QHBoxLayout, QGroupBox
 
 from View.Budget.Budget import CBudget
 from View.Order.Order import COrder
@@ -22,7 +22,7 @@ class MainWindow(QMainWindow):
         self.budget = CBudget(self.order)
         self.profit_loss = CProfitLoss()
 
-        self.splitter = QSplitter(Qt.Vertical)
+        self.splitter = QSplitter()
         self.splitter.addWidget(self.budget)
         self.splitter.addWidget(self.order)
         self.splitter.addWidget(self.profit_loss)

@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QComboBox, QHBoxLayout
+from PyQt6.QtWidgets import QWidget, QComboBox, QHBoxLayout
 
 from View.Visualize.Price import PriceLabel
 
