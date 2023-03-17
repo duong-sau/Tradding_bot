@@ -1,12 +1,10 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox
-
-from View.Visualize.Price import PriceLabel
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QLabel
 
 
 class SymbolView(QWidget):
     def __init__(self, parent=None):
         super(SymbolView, self).__init__(parent)
-        self.price_label = PriceLabel('Price')
+        self.price_label = QLabel('Price')
         self.symbol_select = QComboBox()
         self.create_layout()
 

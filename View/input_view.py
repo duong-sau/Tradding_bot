@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from View._Common.HWidget import HWidget
 from View._Common.TextBox.FloatTextBox import FloatTextBox
+from View._Common.TextBox.IntTextBox import IntTextBox
 from View._Common.VWidget import VWidget
 
 
@@ -10,7 +11,7 @@ class InputView(QWidget):
         super(InputView, self).__init__(parent)
 
         self.m_textbox = FloatTextBox('Số lượng tiền, đơn vị USD', 'M')
-        self.n_textbox = FloatTextBox('Số lệnh                         ', 'n')
+        self.n_textbox = IntTextBox('Số lệnh                         ', 'n')
         self.input_w = VWidget(self.m_textbox, self.n_textbox)
 
         self.min_textbox = FloatTextBox('Min', 'M')

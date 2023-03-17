@@ -1,3 +1,4 @@
+import sys
 import time
 
 from PyQt5 import QtCore
@@ -36,6 +37,7 @@ class CBinanceThread(QThread):
             self.client.ping()
         except (BinanceRequestException, BinanceAPIException):
             msg_box('Không thể kết nối đến server')
+            sys.exit(0)
 
     def set_symbols(self):
         exchange_info = self.client.get_exchange_info()

@@ -11,7 +11,7 @@ from View.symbol_view import SymbolView
 
 
 class MainWindow(QMainWindow):
-    open_order_signal = pyqtSignal(dict)
+    open_order_signal = pyqtSignal(tuple)
     update_symbol_signal = pyqtSignal(str)
 
     def __init__(self, parent=None):
@@ -106,6 +106,7 @@ class MainWindow(QMainWindow):
             'tp2': self.take_profit2_textbox.get_value(),
             'm_': self.m_combobox.currentText(),
             'n_': self.n_combobox.currentText(),
+            'symbol': self.symbol_select.currentText(),
             'margin': self.margin_textbox.get_value()
         }
         return data
