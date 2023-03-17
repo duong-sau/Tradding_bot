@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from View._Common.TextBox.FloatTextBox import FloatTextBox
+from View.a_common.TextBox.FloatTextBox import FloatTextBox
 
 
 class PNLView(QWidget):

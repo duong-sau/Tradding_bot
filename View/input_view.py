@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from View._Common.HWidget import HWidget
-from View._Common.TextBox.FloatTextBox import FloatTextBox
-from View._Common.TextBox.IntTextBox import IntTextBox
-from View._Common.VWidget import VWidget
+from View.a_common.HWidget import HWidget
+from View.a_common.TextBox.FloatTextBox import FloatTextBox
+from View.a_common.TextBox.IntTextBox import IntTextBox
+from View.a_common.VWidget import VWidget
 
 
 class InputView(QWidget):

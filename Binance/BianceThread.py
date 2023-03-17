@@ -9,7 +9,7 @@ from binance.exceptions import BinanceRequestException, BinanceAPIException
 from Binance import api_key, api_secret
 from Binance.Common import get_limit_from_parameter
 from Binance.OTOListener import OTOListener
-from View._Common.MsgBox import msg_box
+from View.a_common.MsgBox import msg_box
 
 
 class CBinanceThread(QThread):
@@ -68,8 +68,10 @@ class CBinanceThread(QThread):
     @QtCore.pyqtSlot(list)
     def open_order(self, datas):
         for data in datas:
-            symbol, quantity, price, stop_loss, take_profit, margin, side = data
+            symbol, quantity, price, stop_loss, take_profit_1, take_profit_2, margin, side = data
             parameter = get_limit_from_parameter(symbol, quantity, price, margin, side)
-            position = OTOListener(self.client, self.remove_position, parameter, stop_loss, take_profit)
+            position = OTOListener(self.client, self.remove_position, parameter, stop_loss, take_profit_1,
+                                   take_profit_2)
             self.position_list.append(position)
             position.make_limit_order()
+        msg_box("Đặt lệnh xong", "Thành công")

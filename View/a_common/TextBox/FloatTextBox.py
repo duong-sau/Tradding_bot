@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
 
-from View._Common.TextBox.TextBox import TextBox
+from View.a_common.TextBox.TextBox import TextBox
 
 
 class FloatTextBox(TextBox):

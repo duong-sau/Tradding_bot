@@ -67,5 +67,5 @@ def process(data):
         return False, []
 
     for i in range(len(orders)):
-        requests.append((data['symbol'], budgets[i], orders[i], data['sl'], data['tp1'], data['tp2'], open_type))
+        requests.append((data['symbol'], budgets[i], orders[i], data['sl'], data['tp1'], data['tp2'],data['margin'], open_type))
     return True, requests

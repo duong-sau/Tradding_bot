@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QComboBox, QVBoxLayout, QLabel
 
-from View._Common.HWidget import HWidget
-from View._Common.TextBox.FloatTextBox import FloatTextBox
+from View.a_common.HWidget import HWidget
+from View.a_common.TextBox.FloatTextBox import FloatTextBox
 from common import probability_list_m, probability_list_n
 
 

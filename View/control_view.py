@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
-from View._Common.Button.Button import Button
+from View.a_common.Button.Button import Button
 
 
 class ControlView(QWidget):

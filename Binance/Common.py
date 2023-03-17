@@ -21,7 +21,7 @@ def get_limit_from_parameter(symbol, quantity, price, margin, side):
         'symbol': symbol,
         'side': side,
         'price': float(round(price, 2)),
-        'quantity': float(round(quantity, 3)),
+        'quantity': float(round(quantity/price, 3)),
         'leverage': margin,
         'type': 'LIMIT',
         'newClientOrderId': order_id,
@@ -49,14 +49,14 @@ def get_stop_loss_form_limit(limit_order, stop_loss):
     return order_param
 
 
-def get_take_profit_form_limit(limit_order, take_profit):
+def get_take_profit_form_limit(limit_order, take_profit, percent):
     limit_side = limit_order['side']
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
     take_profit = get_rounded_price(take_profit)
     order_param = {
         'symbol': limit_order['symbol'],
         'side': inflect_side(limit_side),
-        'quantity': limit_order['origQty'],
+        'quantity': limit_order['origQty']*percent,
         'stopPrice': float(round(take_profit, 2)),
         'newClientOrderId': order_id,
         'reduceOnly': True,
