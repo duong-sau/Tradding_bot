@@ -50,8 +50,17 @@ def complete_data(data):
     max_val = data['max']
     m_ = data['m_']
     n_ = data['n_']
-    m_list = math_dict[m_](min_val=0, max_val=m, counter=n)
-    n_list = math_dict[n_](min_val=min_val, max_val=max_val, counter=n)
+    mc = data['mc']
+    if mc:
+        m_list = mc + math_dict[m_](min_val=mc[-1], max_val=m, counter=n-len(mc))
+    else:
+        m_list = math_dict[m_](min_val=0, max_val=m, counter=n)
+
+    nc = data['nc']
+    if nc:
+        n_list = nc + math_dict[n_](min_val=mc[-1], max_val=max_val, counter=n-len(nc))
+    else:
+        n_list = math_dict[n_](min_val=min_val, max_val=max_val, counter=n)
     data['M'] = m_list
     data['n'] = n_list
     return data

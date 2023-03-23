@@ -3,6 +3,7 @@ import time
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal, QThread
+from PyQt5.QtWidgets import QMessageBox
 from binance.client import Client
 from binance.exceptions import BinanceRequestException, BinanceAPIException
 
@@ -67,6 +68,19 @@ class CBinanceThread(QThread):
 
     @QtCore.pyqtSlot(list)
     def open_order(self, datas):
+        confim_str = ""
+        for data in datas:
+            symbol, quantity, price, stop_loss, take_profit_1, take_profit_2, margin, side = data
+            confim_str = confim_str + f'Giá: {price}    |||| số lượng {quantity}\n'
+
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+        msg.setWindowTitle("Xác nhận đặt lệnh")
+        msg.setText(confim_str)
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        if msg.exec() != QMessageBox.Ok:
+            return
+
         for data in datas:
             symbol, quantity, price, stop_loss, take_profit_1, take_profit_2, margin, side = data
             parameter = get_limit_from_parameter(symbol, quantity, price, margin, side)

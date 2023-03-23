@@ -83,7 +83,7 @@ class OTOListener:
             elif event['c'] == self.take_profit_1_order['clientOrderId']:
                 self.handle_take_profit_1(event)
             else:
-                print('pass')
+                return
         except (BinanceAPIException, BinanceRequestException):
             msg_box(sys.exc_info()[1])
 

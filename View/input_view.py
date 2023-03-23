@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from View.a_common.HWidget import HWidget
+from View.a_common.TextBox.AllocatorTextBox import AllocatorTextBox
 from View.a_common.TextBox.FloatTextBox import FloatTextBox
 from View.a_common.TextBox.IntTextBox import IntTextBox
 from View.a_common.VWidget import VWidget
@@ -11,8 +12,10 @@ class InputView(QWidget):
         super(InputView, self).__init__(parent)
 
         self.m_textbox = FloatTextBox('Số lượng tiền, đơn vị USD', 'M')
+        self.m_allocator = AllocatorTextBox('Phân bố M', 'cách nhau bằng dấu phẩy')
         self.n_textbox = IntTextBox('Số lệnh                         ', 'n')
-        self.input_w = VWidget(self.m_textbox, self.n_textbox)
+        self.n_allocator = AllocatorTextBox('Phân bố n', 'cách nhau bằng dấu phẩy')
+        self.input_w = VWidget(self.m_textbox, self.m_allocator, self.n_textbox, self.n_allocator)
 
         self.min_textbox = FloatTextBox('Min', 'M')
         self.max_textbox = FloatTextBox('Max', 'n')

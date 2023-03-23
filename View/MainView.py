@@ -22,7 +22,9 @@ class MainWindow(QMainWindow):
 
         self.input_view = InputView()
         self.m_textbox = self.input_view.m_textbox
+        self.m_allocator = self.input_view.m_allocator
         self.n_textbox = self.input_view.n_textbox
+        self.n_allocator = self.input_view.n_allocator
         self.min_textbox = self.input_view.min_textbox
         self.max_textbox = self.input_view.max_textbox
 
@@ -106,12 +108,20 @@ class MainWindow(QMainWindow):
     def update_pnl(self):
         M = self.m_textbox.get_value()
         n = self.n_textbox.get_value()
+        mc = self.m_allocator.get_value()
+        nc = self.n_allocator.get_value()
         min_val = self.min_textbox.get_value()
         max_val = self.max_textbox.get_value()
         m_ = self.m_combobox.currentText()
         n_ = self.n_combobox.currentText()
-        ms = math_dict[m_](0, M, n)
-        ns = math_dict[n_](min_val, max_val, n)
+        if mc:
+            ms = math_dict[m_](mc[-1], M, n-len(mc))
+        else:
+            ms = math_dict[m_](0, M, n)
+        if nc:
+            ns = math_dict[n_](nc[-1], max_val, n-len(nc))
+        else:
+            ns = math_dict[n_](min_val, max_val, n)
         SL = self.stop_loss_textbox.get_value()
         TP1 = self.take_profit1_textbox.get_value()
         TP2 = self.take_profit2_textbox.get_value()
@@ -137,6 +147,8 @@ Margin đề xuất        RX       :{(M * 0.1) / (SL - E)}
         data = {
             'M': self.m_textbox.get_value(),
             'n': self.n_textbox.get_value(),
+            'nc': self.n_allocator.get_value(),
+            'mc': self.m_allocator.get_value(),
             'min': self.min_textbox.get_value(),
             'max': self.max_textbox.get_value(),
             'sl': self.stop_loss_textbox.get_value(),

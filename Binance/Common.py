@@ -56,7 +56,7 @@ def get_take_profit_form_limit(limit_order, take_profit, percent):
     order_param = {
         'symbol': limit_order['symbol'],
         'side': inflect_side(limit_side),
-        'quantity': limit_order['origQty']*percent,
+        'quantity': float(limit_order['origQty'])*percent,
         'stopPrice': float(round(take_profit, 2)),
         'newClientOrderId': order_id,
         'reduceOnly': True,

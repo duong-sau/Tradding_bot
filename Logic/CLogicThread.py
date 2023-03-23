@@ -32,5 +32,3 @@ class CLogicThread(QThread):
     def update_price(self, price):
         self.update_price_signal.emit(price)
 
-    # @QtCore.pyqtSlot(tuple)
-    # def update_hint_text(self):
