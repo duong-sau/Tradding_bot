@@ -82,10 +82,10 @@ class CBinanceThread(QThread):
             return
 
         for data in datas:
-            symbol, quantity, price, stop_loss, take_profit_1, take_profit_2, margin, side = data
+            symbol, quantity, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data
             parameter = get_limit_from_parameter(symbol, quantity, price, margin, side)
-            position = OTOListener(self.client, self.remove_position, parameter, stop_loss, take_profit_1,
-                                   take_profit_2)
+            position = OTOListener(self.client, self.remove_position, parameter, stop_loss, take_profit_1,a,
+                                   take_profit_2, b)
             self.position_list.append(position)
             position.make_limit_order()
         msg_box("Đặt lệnh xong", "Thành công")

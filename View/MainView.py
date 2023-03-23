@@ -37,8 +37,10 @@ class MainWindow(QMainWindow):
         self.stop_loss_textbox = self.advance_view.stop_loss_textbox
         self.stop_loss_percent = self.advance_view.stop_loss_percent
         self.take_profit1_textbox = self.advance_view.take_profit1_textbox
+        self.a = self.advance_view.a
         self.take_profit1_percent = self.advance_view.take_profit1_percent
         self.take_profit2_textbox = self.advance_view.take_profit2_textbox
+        self.b = self.advance_view.b
         self.take_profit2_percent = self.advance_view.take_profit2_percent
 
         self.control_view = ControlView()
@@ -134,9 +136,9 @@ class MainWindow(QMainWindow):
                 f'''
 Giá thanh lý              LONG: {E - (E / X)}
                                     SHORT: {E + (E / X)}
-Margin đề xuất        RX       :{(M * 0.1) / (SL - E)}
-                                  PNL chưa biết tính
-                                  SPNL Chưa biết tính luôn''')
+Margin đề xuất         RX       :{(M * 0.1) / (SL - E)}
+                                   PNL chưa biết tính
+                                   SPNL Chưa biết tính luôn''')
             self.stop_loss_percent.setText(f"""% : {M * (SL - E) * X / E}""")
             self.take_profit1_percent.setText(f"""%: {M * 0.25 * (TP1 - E) * X / E}""")
             self.take_profit2_percent.setText(f"""%: {M * 0.25 * (TP2 - E) * X / E}""")
@@ -153,7 +155,9 @@ Margin đề xuất        RX       :{(M * 0.1) / (SL - E)}
             'max': self.max_textbox.get_value(),
             'sl': self.stop_loss_textbox.get_value(),
             'tp1': self.take_profit1_textbox.get_value(),
+            'a': self.a.get_value(),
             'tp2': self.take_profit2_textbox.get_value(),
+            'b': self.b.get_value(),
             'm_': self.m_combobox.currentText(),
             'n_': self.n_combobox.currentText(),
             'symbol': self.symbol_select.currentText(),

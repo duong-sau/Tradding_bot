@@ -52,13 +52,13 @@ def complete_data(data):
     n_ = data['n_']
     mc = data['mc']
     if mc:
-        m_list = mc + math_dict[m_](min_val=mc[-1], max_val=m, counter=n-len(mc))
+        m_list = mc + math_dict[m_](min_val=mc[-1], max_val=m, counter=n - len(mc))
     else:
         m_list = math_dict[m_](min_val=0, max_val=m, counter=n)
 
     nc = data['nc']
     if nc:
-        n_list = nc + math_dict[n_](min_val=mc[-1], max_val=max_val, counter=n-len(nc))
+        n_list = nc + math_dict[n_](min_val=mc[-1], max_val=max_val, counter=n - len(nc))
     else:
         n_list = math_dict[n_](min_val=min_val, max_val=max_val, counter=n)
     data['M'] = m_list
@@ -76,5 +76,7 @@ def process(data):
         return False, []
 
     for i in range(len(orders)):
-        requests.append((data['symbol'], budgets[i], orders[i], data['sl'], data['tp1'], data['tp2'],data['margin'], open_type))
+        requests.append(
+            (data['symbol'], budgets[i], orders[i], data['sl'], data['tp1'], data['a'], data['tp2'], data['b'],
+             data['margin'], open_type))
     return True, requests

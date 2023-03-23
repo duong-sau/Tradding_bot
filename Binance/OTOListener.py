@@ -10,7 +10,7 @@ FILL = 'FILLED'
 
 
 class OTOListener:
-    def __init__(self, client, destroy_call_back, parameter, stop_loss, take_profit, take_profit_2) -> None:
+    def __init__(self, client, destroy_call_back, parameter, stop_loss, take_profit,a, take_profit_2, b) -> None:
         print(parameter)
         self.destroy_call_back = destroy_call_back
         self.take_profit_1_order = {'clientOrderId': '-1'}
@@ -92,11 +92,11 @@ class OTOListener:
         self.stop_loss_order = self.client.futures_create_order(**parameter)
 
     def make_take_profit_1_order(self):
-        parameter = get_take_profit_form_limit(self.limit_order, self.take_profit, 0.75)
+        parameter = get_take_profit_form_limit(self.limit_order, self.take_profit, self.a/100)
         self.take_profit_1_order = self.client.futures_create_order(**parameter)
 
     def make_take_profit_2_order(self):
-        parameter = get_take_profit_form_limit(self.limit_order, self.take_profit_2, 0.25)
+        parameter = get_take_profit_form_limit(self.limit_order, self.take_profit_2, self.b/100)
         self.take_profit_2_order = self.client.futures_create_order(**parameter)
 
     def cancel_stop_loss_order(self):

@@ -11,8 +11,10 @@ class AdvanceView(QWidget):
         self.stop_loss_percent = QLabel("%")
         self.take_profit1_textbox = FloatTextBox('Take profit 1', 'giá')
         self.take_profit1_percent = QLabel("%")
+        self.a = FloatTextBox('% tp1', 'a')
         self.take_profit2_textbox = FloatTextBox('Take profit 2', 'giá')
         self.take_profit2_percent = QLabel("%")
+        self.b = FloatTextBox('% tp2', 'b')
         self.create_widgets()
         self.create_connection()
         self.create_layout()
@@ -23,8 +25,8 @@ class AdvanceView(QWidget):
     def create_layout(self):
         layout = QVBoxLayout()
         layout.addWidget(HWidget(self.stop_loss_textbox, self.stop_loss_percent))
-        layout.addWidget(HWidget(self.take_profit1_textbox, self.take_profit1_percent))
-        layout.addWidget(HWidget(self.take_profit2_textbox, self.take_profit2_percent))
+        layout.addWidget(HWidget(self.take_profit1_textbox, self.a, self.take_profit1_percent))
+        layout.addWidget(HWidget(self.take_profit2_textbox, self.b, self.take_profit2_percent))
         self.setLayout(layout)
 
     def get_value(self):
