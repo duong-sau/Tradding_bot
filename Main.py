@@ -12,7 +12,14 @@ from connection import register_connections
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    apply_stylesheet(app, theme='dark_yellow.xml')
+    extra = {
+        # Font
+        'font_family': 'Consolas',
+        'font_size': 20
+    }
+
+    apply_stylesheet(app, theme='dark_yellow.xml',  invert_secondary=True, extra=extra)
+
     # logic thread
     logic_thread = CLogicThread()
 
