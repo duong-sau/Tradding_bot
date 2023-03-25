@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMessageBox
 
-from common import math_dict
+from Common.m_common import m_math_dict
+from Common.n_common import n_math_dict
 
 
 def check_val_data(data, msg_box):
@@ -52,15 +53,15 @@ def complete_data(data):
     n_ = data['n_']
     mc = data['mc']
     if mc:
-        m_list = mc + math_dict[m_](min_val=mc[-1], max_val=m, counter=n - len(mc))
+        m_list = mc + m_math_dict[m_](min_val=mc[-1], max_val=m, counter=n - len(mc))
     else:
-        m_list = math_dict[m_](min_val=0, max_val=m, counter=n)
+        m_list = m_math_dict[m_](min_val=0, max_val=m, counter=n)
 
     nc = data['nc']
     if nc:
-        n_list = nc + math_dict[n_](min_val=mc[-1], max_val=max_val, counter=n - len(nc))
+        n_list = nc + n_math_dict[n_](min_val=mc[-1], max_val=max_val, counter=n - len(nc))
     else:
-        n_list = math_dict[n_](min_val=min_val, max_val=max_val, counter=n)
+        n_list = n_math_dict[n_](min_val=min_val, max_val=max_val, counter=n)
     data['M'] = m_list
     data['n'] = n_list
     return data
@@ -72,11 +73,15 @@ def process(data):
     data = complete_data(data)
     budgets, orders = data['M'], data['n']
 
-    if not pre_proces(budgets, orders, data['sl'], data['tp1'], data['tp2'], data['margin']):
-        return False, []
+    # if not pre_proces(budgets, orders, data['sl'], data['tp1'], data['tp2'], data['margin']):
+    #     return False, []
 
     for i in range(len(orders)):
         requests.append(
             (data['symbol'], budgets[i], orders[i], data['sl'], data['tp1'], data['a'], data['tp2'], data['b'],
              data['margin'], open_type))
+
+    for d in requests:
+        print(d)
+    return False, []
     return True, requests

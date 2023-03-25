@@ -1,16 +1,15 @@
-import time
-
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QLabel, QDesktopWidget
+from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QDesktopWidget
 
+from Common.m_common import m_math_dict
+from Common.n_common import n_math_dict
 from View.addvance_view import AdvanceView
 from View.combobox_view import ComboboxView
 from View.control_view import ControlView
 from View.input_view import InputView
 from View.pnl_view import PNLView
 from View.symbol_view import SymbolView
-from common import math_dict
 
 
 class MainWindow(QMainWindow):
@@ -60,7 +59,7 @@ class MainWindow(QMainWindow):
     def create_view(self):
         desktop = QDesktopWidget()
         screenRect = desktop.screenGeometry()
-        self.setGeometry(0, 0, screenRect.width(), screenRect.height())
+        self.setGeometry(0, 0, screenRect.width(), screenRect.height()-50)
         self.setWindowTitle('Trading Bot')
 
     def create_layout(self):
@@ -115,13 +114,13 @@ class MainWindow(QMainWindow):
         m_ = self.m_combobox.currentText()
         n_ = self.n_combobox.currentText()
         if mc:
-            ms = math_dict[m_](mc[-1], M, n - len(mc))
+            ms = m_math_dict[m_](mc[-1], M, n - len(mc))
         else:
-            ms = math_dict[m_](0, M, n)
+            ms = m_math_dict[m_](0, M, n)
         if nc:
-            ns = math_dict[n_](nc[-1], max_val, n - len(nc))
+            ns = n_math_dict[n_](nc[-1], max_val, n - len(nc))
         else:
-            ns = math_dict[n_](min_val, max_val, n)
+            ns = n_math_dict[n_](min_val, max_val, n)
         SL = self.stop_loss_textbox.get_value()
         TP1 = self.take_profit1_textbox.get_value()
         TP2 = self.take_profit2_textbox.get_value()

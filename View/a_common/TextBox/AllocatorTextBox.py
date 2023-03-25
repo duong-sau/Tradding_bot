@@ -4,7 +4,7 @@ from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
 
 from View.a_common.TextBox.TextBox import TextBox
-from common import string_to_float_list
+from Common.common import string_to_float_list
 
 
 class AllocatorTextBox(TextBox):

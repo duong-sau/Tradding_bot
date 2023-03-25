@@ -12,9 +12,9 @@ class InputView(QWidget):
         super(InputView, self).__init__(parent)
 
         self.m_textbox = FloatTextBox('Số lượng tiền, đơn vị USD', 'M')
-        self.m_allocator = AllocatorTextBox('Phân bố M', 'cách nhau bằng dấu phẩy')
+        self.m_allocator = AllocatorTextBox('Phân bố M', 'Cách nhau bằng dấu phẩy')
         self.n_textbox = IntTextBox('Số lệnh                         ', 'n')
-        self.n_allocator = AllocatorTextBox('Phân bố n', 'cách nhau bằng dấu phẩy')
+        self.n_allocator = AllocatorTextBox('Phân bố n', 'Cách nhau bằng dấu phẩy')
         self.input_w = VWidget(self.m_textbox, self.m_allocator, self.n_textbox, self.n_allocator)
 
         self.min_textbox = FloatTextBox('Min', 'M')

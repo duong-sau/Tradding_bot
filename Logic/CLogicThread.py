@@ -31,4 +31,3 @@ class CLogicThread(QThread):
     @QtCore.pyqtSlot(str)
     def update_price(self, price):
         self.update_price_signal.emit(price)
-

@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import QWidget, QComboBox, QVBoxLayout, QLabel
 
+from Common.m_common import probability_list_m
+from Common.n_common import probability_list_n
 from View.a_common.HWidget import HWidget
 from View.a_common.TextBox.FloatTextBox import FloatTextBox
-from common import probability_list_m, probability_list_n
 
 
 class ComboboxView(QWidget):
