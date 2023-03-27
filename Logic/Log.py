@@ -1,36 +1,25 @@
 import pygsheets
-from google.oauth2 import service_account
 
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-SERVICE_ACCOUNT_FILE = r'C:\Users\Sau\Downloads\Tradding_bot\Logic\traddingbot-18675fbbd1d6.json'
-SPREADSHEET_ID = '1qrSDPFVZYW2k1oJGgrTqbPlfzp17wbM2q6Nua8aFUP4'
+# Đường dẫn đến file JSON chứa thông tin Service Account Key
+path_to_json_file = r'C:\Users\phamv\Downloads\Bot\Bot\Logic\traddingbot-18675fbbd1d6.json'
 
-creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+# Khởi tạo một kết nối đến Google Sheets bằng Pygsheets
+gc = pygsheets.authorize(service_file=path_to_json_file)
 
-
-
-client = pygsheets.authorize(client_secret=creds)
-
-# Open the spreadsheet and the first sheet.
-sh = client.open('Tradding bot loging')
-wks = sh.sheet1
-
-# Update a single cell.
-wks.update_value('A1', "Numbers on Stuff")
-
-# Update the worksheet with the numpy array values. Beginning at cell 'A2'.
-wks.update_values('A2', 'A')
-
-# Share the sheet with your friend. (read access only)
-sh.share('friend@gmail.com')
-# sharing with write access
-sh.share('friend@gmail.com', role='writer')
+# Lấy một worksheet bằng tên của worksheet đó
+work_book = gc.open_by_key('1qrSDPFVZYW2k1oJGgrTqbPlfzp17wbM2q6Nua8aFUP4')
+log = work_book.worksheet(property='title', value='order_log')
 
 
-def log_request(data):
-    for row in data:
-        print(row)
+def log_order(order_id, action, symbol, price, quantity, margin, profit):
+    new_row_values = [order_id, action, symbol, price, quantity, margin, profit]
+    log.append_table(values=[new_row_values])
 
 
-def order_log(symbol, quantity, price, stop_price):
-    print(symbol, quantity, price, stop_price)
+def log_fail(limit_id, content):
+    row = [limit_id, content]
+    log.append_table(values=[row])
+
+if __name__ == '__main__':
+    log_order('1', 2, 3, 4, 5, 6, 7)
+    log_fail('1234', 'fail')

@@ -73,15 +73,12 @@ def process(data):
     data = complete_data(data)
     budgets, orders = data['M'], data['n']
 
-    # if not pre_proces(budgets, orders, data['sl'], data['tp1'], data['tp2'], data['margin']):
-    #     return False, []
+    if not pre_proces(budgets, orders, data['sl'], data['tp1'], data['tp2'], data['margin']):
+        return False, []
 
     for i in range(len(orders)):
         requests.append(
             (data['symbol'], budgets[i], orders[i], data['sl'], data['tp1'], data['a'], data['tp2'], data['b'],
              data['margin'], open_type))
 
-    for d in requests:
-        print(d)
-    return False, []
     return True, requests

@@ -15,12 +15,14 @@ from View.a_common.MsgBox import msg_box
 
 class CBinanceThread(QThread):
     update_price_signal = pyqtSignal(str)
+    update_pnl_signal = pyqtSignal(float)
     set_symbols_signal = pyqtSignal(list)
 
     def __init__(self):
         super(CBinanceThread, self).__init__()
         self.position_list = []
         self.running = True
+        self.pnl = 0
         self.symbol = 'BTCUSDT'
         self.client = Client(api_key, api_secret, testnet=True)
 
@@ -43,9 +45,11 @@ class CBinanceThread(QThread):
     def set_symbols(self):
         exchange_info = self.client.get_exchange_info()
         symbols = exchange_info['symbols']
-        symbol_names = []
+        symbol_names = ['BTCUSDT', 'BTCBUSD']
         for symbol in symbols:
             symbol_name = symbol['symbol']
+            if symbol in symbols:
+                continue
             symbol_names.append(symbol_name)
         self.set_symbols_signal.emit(symbol_names)
 
@@ -54,7 +58,11 @@ class CBinanceThread(QThread):
         price = ticker['markPrice']
         self.update_price_signal.emit(price)
 
+    def update_pnl(self):
+        self.update_pnl_signal.emit(self.pnl)
+
     def remove_position(self, position):
+        self.pnl = self.pnl + position.pnl
         self.position_list.remove(position)
 
     @QtCore.pyqtSlot(dict)
@@ -68,15 +76,15 @@ class CBinanceThread(QThread):
 
     @QtCore.pyqtSlot(list)
     def open_order(self, datas):
-        confim_str = ""
+        confirm_str = ""
         for data in datas:
-            symbol, quantity, price, stop_loss, take_profit_1, take_profit_2, margin, side = data
-            confim_str = confim_str + f'Giá: {price}    |||| số lượng {quantity}\n'
+            symbol, quantity, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data
+            confirm_str = confirm_str + f'Giá: {price}    |||| số lượng {quantity}\n'
 
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
         msg.setWindowTitle("Xác nhận đặt lệnh")
-        msg.setText(confim_str)
+        msg.setText(confirm_str)
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         if msg.exec() != QMessageBox.Ok:
             return
@@ -84,7 +92,7 @@ class CBinanceThread(QThread):
         for data in datas:
             symbol, quantity, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data
             parameter = get_limit_from_parameter(symbol, quantity, price, margin, side)
-            position = OTOListener(self.client, self.remove_position, parameter, stop_loss, take_profit_1,a,
+            position = OTOListener(self.client, self.remove_position, parameter, stop_loss, take_profit_1, a,
                                    take_profit_2, b)
             self.position_list.append(position)
             position.make_limit_order()

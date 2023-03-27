@@ -1,11 +1,28 @@
 import logging
+import re
+
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPlainTextEdit, QPushButton
 from PyQt5.QtGui import QFont
+
+message_format = \
+    f'''
+Giá thanh lý           LONG     : %long%
+                       SHORT    : %short%
+
+Margin đề xuất         RX       : %rx%
+                       PNL      : %pnl%
+
+----------------------------------------------------------
+STOP LOSS     (%) : %sl%
+T___ P__1     (%) : %tp1%
+T___ P__2     (%) : %tp2%
+'''
 
 
 class PNLView(QWidget):
     def __init__(self, test, parent=None):
         super().__init__(parent)
+        self.long, self.short, self.rx, self.sl, self.tp1, self.tp2, self.pnl = "", "", "", "", "", "", 0
         self.setWindowTitle("Log Window")
 
         # Tạo QPlainTextEdit để hiển thị console log
@@ -34,35 +51,31 @@ class PNLView(QWidget):
         """
         self.log_console.setStyleSheet(stylesheet)
 
-        # Cấu hình logging để ghi log vào QPlainTextEdit
-        # logging.basicConfig(level=logging.DEBUG, stream=self)
-        # self.logger = logging.getLogger()
-        # self.logger.addHandler(logging.StreamHandler(self))
-
-    def write(self, message):
+    def update(self):
         # Ghi log vào QPlainTextEdit
+        message = message_format
+        message = re.sub('%long%', self.long, message)
+        message = re.sub('%short%', self.short, message)
+        message = re.sub('%rx%', self.rx, message)
+        message = re.sub('%pnl%', str(self.pnl), message)
+        message = re.sub('%sl%', self.sl, message)
+        message = re.sub('%tp1%', self.tp1, message)
+        message = re.sub('%tp2%', self.tp2, message)
         self.log_console.insertPlainText(message)
 
     def clear_log(self):
         # Xóa nội dung trong QPlainTextEdit
         self.log_console.clear()
 
-    def set_text(self, long, short, rx, pnl, spnl, sl, tp1, tp2):
+    def update_pnl(self, pnl):
+        self.pnl = pnl
+        self.update()
+
+    def set_text(self, long, short, rx, sl, tp1, tp2):
         self.clear_log()
-        message = \
-            f'''
-Giá thanh lý           LONG     : {long}
-                       SHORT    : {short}\
-                       
-Margin đề xuất         RX       : {rx}
-                       PNL      : {pnl} 
-                       SPNL     : {spnl}
-----------------------------------------------------------\n'''
-        message = message + f"""STOP LOSS     (%) : {sl}  \n"""
-        message = message + f"""T___ P__1     (%) : {tp1} \n"""
-        message = message + f"""T___ P__2     (%) : {tp2} \n"""
-        self.write(message=message)
+        self.long, self.short, self.rx, self.sl, self.tp1, self.tp2 = str(long), str(short), str(rx), str(sl), str(tp1), str(tp2)
+        self.update()
 
     def log_cant_cal(self):
         self.clear_log()
-        self.write('Chưa thể tính toán')
+        self.log_console.insertPlainText("Chưa tính được")

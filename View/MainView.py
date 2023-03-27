@@ -1,5 +1,5 @@
 from PyQt5 import QtCore
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QDesktopWidget
 
 from Common.m_common import m_math_dict
@@ -18,6 +18,10 @@ class MainWindow(QMainWindow):
 
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.timer_run)
+        self.timer.start(1000)
 
         self.input_view = InputView()
         self.m_textbox = self.input_view.m_textbox
@@ -59,7 +63,7 @@ class MainWindow(QMainWindow):
     def create_view(self):
         desktop = QDesktopWidget()
         screenRect = desktop.screenGeometry()
-        self.setGeometry(0, 0, screenRect.width(), screenRect.height()-50)
+        self.setGeometry(0, 0, screenRect.width(), screenRect.height() - 50)
         self.setWindowTitle('Trading Bot')
 
     def create_layout(self):
@@ -94,7 +98,6 @@ class MainWindow(QMainWindow):
     @QtCore.pyqtSlot(str)
     def update_price(self, price):
         self.price_label.setText(price)
-        self.update_pnl()
 
     @QtCore.pyqtSlot(list)
     def set_symbols(self, symbol_names):
@@ -104,7 +107,10 @@ class MainWindow(QMainWindow):
     def update_symbol(self, symbol):
         self.update_symbol_signal.emit(symbol)
 
-    def update_pnl(self):
+    def timer_run(self):
+        self.pnl_cal()
+
+    def pnl_cal(self):
         M = self.m_textbox.get_value()
         n = self.n_textbox.get_value()
         mc = self.m_allocator.get_value()
@@ -123,6 +129,7 @@ class MainWindow(QMainWindow):
             ns = n_math_dict[n_](min_val, max_val, n)
         SL = self.stop_loss_textbox.get_value()
         TP1 = self.take_profit1_textbox.get_value()
+        a = self.a.get_value()/100
         TP2 = self.take_profit2_textbox.get_value()
         X = self.margin_textbox.get_value()
         try:
@@ -131,13 +138,11 @@ class MainWindow(QMainWindow):
 
             long = E - (E / X)
             short = E + (E / X)
-            rx = (M * 0.1) / (SL - E)
-            pnl = 0
-            spnl = 0
-            sl = M * (SL - E) * X / E
-            tp1 = M * 0.25 * (TP1 - E) * X / E
-            tp2 = M * 0.25 * (TP2 - E) * X / E
-            self.pnl_view.set_text(long, short, rx, pnl, spnl, sl, tp1, tp2)
+            rx = (M * 0.1) / abs(SL - E)
+            sl = M * abs(SL - E) * X / E
+            tp1 = M * a * abs(TP1 - E) * X / E
+            tp2 = M * (1 - a) * abs(TP2 - E) * X / E
+            self.pnl_view.set_text(long, short, rx, sl, tp1, tp2)
         except:
             self.pnl_view.log_cant_cal()
 
@@ -151,9 +156,9 @@ class MainWindow(QMainWindow):
             'max': self.max_textbox.get_value(),
             'sl': self.stop_loss_textbox.get_value(),
             'tp1': self.take_profit1_textbox.get_value(),
-            'a': self.a.get_value(),
+            'a': self.a.get_value()/100,
             'tp2': self.take_profit2_textbox.get_value(),
-            'b': self.b.get_value(),
+            'b': self.b.get_value()/100,
             'm_': self.m_combobox.currentText(),
             'n_': self.n_combobox.currentText(),
             'symbol': self.symbol_select.currentText(),
@@ -161,17 +166,21 @@ class MainWindow(QMainWindow):
         }
         return data
 
+    @QtCore.pyqtSlot(float)
+    def update_pnl(self, pnl):
+        self.pnl_view.update_pnl(pnl)
+
     def test(self):
         try:
             self.m_textbox.textbox.setText("800")
-            self.n_textbox.textbox.setText('10')
+            self.n_textbox.textbox.setText('3')
             current_price = float(self.price_label.text())
-            # self.min_textbox.textbox.setText(str(current_price - 1000))
-            self.min_textbox.textbox.setText(str(1800))
+            self.min_textbox.textbox.setText(str(current_price - 1000))
+            # self.min_textbox.textbox.setText(str(1800))
 
-            # self.max_textbox.textbox.setText(str(current_price - 1000))
-            self.max_textbox.textbox.setText(str(2300))
-
+            self.max_textbox.textbox.setText(str(current_price + 1000))
+            # self.max_textbox.textbox.setText(str(2300))
+            self.a.textbox.setText('25')
             self.stop_loss_textbox.textbox.setText(str(current_price - 2000))
             self.take_profit1_textbox.textbox.setText(str(current_price + 2000))
             self.take_profit2_textbox.textbox.setText(str(current_price + 3000))
