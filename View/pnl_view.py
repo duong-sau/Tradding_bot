@@ -73,7 +73,7 @@ class PNLView(QWidget):
 
     def set_text(self, long, short, rx, sl, tp1, tp2):
         self.clear_log()
-        self.long, self.short, self.rx, self.sl, self.tp1, self.tp2 = str(long), str(short), str(rx), str(sl), str(tp1), str(tp2)
+        self.long, self.short, self.rx, self.sl, self.tp1, self.tp2 = str(round(long, 3)), str(round(short, 3)), str(round(rx, 2)), str(round(sl, 3)), str(round(tp1, 3)), str(round(tp2, 3))
         self.update()
 
     def log_cant_cal(self):

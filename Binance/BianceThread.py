@@ -10,6 +10,7 @@ from binance.exceptions import BinanceRequestException, BinanceAPIException
 from Binance import api_key, api_secret
 from Binance.Common import get_limit_from_parameter
 from Binance.OTOListener import OTOListener
+from Logic.Log import log_fail
 from View.a_common.MsgBox import msg_box
 
 
@@ -93,8 +94,11 @@ class CBinanceThread(QThread):
         if msg.exec() != QMessageBox.Ok:
             return
         symbol, quantity, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = datas[0]
-        self.client.futures_change_leverage(symbol=self.symbol, leverage=int(margin))
-        # margin
+        try:
+            self.client.futures_change_leverage(symbol=self.symbol, leverage=int(margin))
+            # margin
+        except:
+            log_fail("Lỗi set margin", str(sys.exc_info()[1]))
 
         for data in datas:
             symbol, quantity, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data
