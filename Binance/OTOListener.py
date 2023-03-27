@@ -44,6 +44,7 @@ class OTOListener:
         return
 
     def destroy(self):
+        log_fail(self.parameter['newClientOrderId'], "Destroy")
         self.destroy_call_back(self)
         pass
 
@@ -55,9 +56,10 @@ class OTOListener:
             self.replace_key(limit_id, 'limit')
 
         except(BinanceRequestException, BinanceAPIException):
+            error = str(sys.exc_info()[1])
+            log_fail(self.parameter['newClientOrderId'], error)
+            msg_box(error)
             self.destroy()
-            log_fail(self.limit_order['clientOrderId'], sys.exc_info()[1])
-            msg_box(sys.exc_info()[1])
 
     def handle_limit(self):
         self.make_stop_loss_1_order()
@@ -101,7 +103,6 @@ class OTOListener:
             elif event['X'] == FILL:
                 self.fill_handle(event)
         except (BinanceAPIException, BinanceRequestException):
-            log_fail(self.limit_order['clientOrderId'], str(sys.exc_info()[1]))
             msg_box(sys.exc_info()[1])
 
     def update_pnl(self, price, percent):
@@ -111,28 +112,44 @@ class OTOListener:
     # Create Order
     # ----------------------------------------------------------------------------------------------------
     def make_stop_loss_1_order(self):
-        parameter = get_stop_loss_form_limit(self.limit_order, self.stop_loss, self.a)
-        order = open_order(self.client, parameter)
-        limit_id = order['clientOrderId']
-        self.replace_key(limit_id, 'stop1')
+        try:
+            parameter = get_stop_loss_form_limit(self.limit_order, self.stop_loss, self.a)
+            order = open_order(self.client, parameter)
+            limit_id = order['clientOrderId']
+            self.replace_key(limit_id, 'stop1')
+        except:
+            log_fail(self.limit_order['clientOrderId'], str(sys.exc_info()[1]))
+            raise
 
     def make_stop_loss_2_order(self):
-        parameter = get_stop_loss_form_limit(self.limit_order, self.stop_loss, self.a)
-        order = open_order(self.client, parameter)
-        limit_id = order['clientOrderId']
-        self.replace_key(limit_id, 'stop2')
+        try:
+            parameter = get_stop_loss_form_limit(self.limit_order, self.stop_loss, self.a)
+            order = open_order(self.client, parameter)
+            limit_id = order['clientOrderId']
+            self.replace_key(limit_id, 'stop2')
+        except:
+            log_fail(self.limit_order['clientOrderId'], str(sys.exc_info()[1]))
+            raise
 
     def make_take_profit_1_order(self):
-        parameter = get_take_profit_form_limit(self.limit_order, self.take_profit_1, self.a)
-        order = open_order(self.client, parameter)
-        limit_id = order['clientOrderId']
-        self.replace_key(limit_id, 'take1')
+        try:
+            parameter = get_take_profit_form_limit(self.limit_order, self.take_profit_1, self.a)
+            order = open_order(self.client, parameter)
+            limit_id = order['clientOrderId']
+            self.replace_key(limit_id, 'take1')
+        except:
+            log_fail(self.limit_order['clientOrderId'], str(sys.exc_info()[1]))
+            raise
 
     def make_take_profit_2_order(self):
-        parameter = get_take_profit_form_limit(self.limit_order, self.take_profit_2, self.b)
-        order = open_order(self.client, parameter)
-        limit_id = order['clientOrderId']
-        self.replace_key(limit_id, 'take2')
+        try:
+            parameter = get_take_profit_form_limit(self.limit_order, self.take_profit_2, self.b)
+            order = open_order(self.client, parameter)
+            limit_id = order['clientOrderId']
+            self.replace_key(limit_id, 'take2')
+        except:
+            log_fail(self.limit_order['clientOrderId'], str(sys.exc_info()[1]))
+            raise
 
     # ----------------------------------------------------------------------------------------------------
     # Cancel Order

@@ -1,7 +1,9 @@
+import inspect
+
 import pygsheets
 
 # Đường dẫn đến file JSON chứa thông tin Service Account Key
-path_to_json_file = r'C:\Users\phamv\Downloads\Bot\Bot\Logic\traddingbot-18675fbbd1d6.json'
+path_to_json_file = r'.\traddingbot-18675fbbd1d6.json'
 
 # Khởi tạo một kết nối đến Google Sheets bằng Pygsheets
 gc = pygsheets.authorize(service_file=path_to_json_file)
@@ -17,9 +19,6 @@ def log_order(order_id, action, symbol, price, quantity, margin, profit):
 
 
 def log_fail(limit_id, content):
-    row = [limit_id, content]
+    action = inspect.getouterframes(inspect.currentframe())[1][3]
+    row = [limit_id, action, content]
     log.append_table(values=[row])
-
-if __name__ == '__main__':
-    log_order('1', 2, 3, 4, 5, 6, 7)
-    log_fail('1234', 'fail')

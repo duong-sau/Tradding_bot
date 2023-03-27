@@ -43,7 +43,7 @@ def get_stop_loss_form_limit(limit_order, stop_loss, percent):
     order_param = {
         'symbol': limit_order['symbol'],
         'side': inflect_side(limit_side),
-        'quantity': float(limit_order['origQty']) * percent,
+        'quantity': float(round(float(limit_order['origQty']) * percent, 3)),
         'stopPrice': float(round(stop_loss, 2)),
         'newClientOrderId': order_id,
         'reduceOnly': True,
@@ -60,7 +60,7 @@ def get_take_profit_form_limit(limit_order, take_profit, percent):
     order_param = {
         'symbol': limit_order['symbol'],
         'side': inflect_side(limit_side),
-        'quantity': float(limit_order['origQty']) * percent,
+        'quantity': float(round(float(limit_order['origQty']) * percent, 3)),
         'stopPrice': float(round(take_profit, 2)),
         'newClientOrderId': order_id,
         'reduceOnly': True,
@@ -71,10 +71,9 @@ def get_take_profit_form_limit(limit_order, take_profit, percent):
 
 
 def open_order(client, data):
-    order = client.futures_create_order(**data)
-    order_id = order['clientOrderId']
+    order_id = data['newClientOrderId']
     action = inspect.getouterframes(inspect.currentframe())[1][3]
-    symbol = "BTCUSDT"
+    symbol = data['symbol']
     profit = 0
     quantity = data['quantity']
     margin = 1
@@ -88,4 +87,5 @@ def open_order(client, data):
         margin = 0
     log_order(action=action, order_id=order_id, symbol=symbol, profit=profit, quantity=quantity, margin=margin,
               price=price)
+    order = client.futures_create_order(**data)
     return order
