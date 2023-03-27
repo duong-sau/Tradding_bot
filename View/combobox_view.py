@@ -1,9 +1,10 @@
-from PyQt5.QtWidgets import QWidget, QComboBox, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import QWidget, QComboBox, QVBoxLayout, QLabel, QPushButton
 
 from Common.m_common import probability_list_m
 from Common.n_common import probability_list_n
 from View.a_common.HWidget import HWidget
 from View.a_common.TextBox.FloatTextBox import FloatTextBox
+from View.a_common.VWidget import VWidget
 
 
 class ComboboxView(QWidget):
@@ -21,11 +22,12 @@ class ComboboxView(QWidget):
         self.m = HWidget(m_text, self.m_combobox)
         self.n = HWidget(n_text, self.n_combobox)
         self.margin_input = FloatTextBox('Margin', '')
+        self.margin_button = QPushButton("Change margin")
         self.create_layout()
 
     def create_layout(self):
         layout = QVBoxLayout()
         layout.addWidget(self.m)
         layout.addWidget(self.n)
-        layout.addWidget(self.margin_input)
+        layout.addWidget(VWidget(self.margin_input, self.margin_button))
         self.setLayout(layout)

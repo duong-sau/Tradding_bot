@@ -120,11 +120,11 @@ class MainWindow(QMainWindow):
         m_ = self.m_combobox.currentText()
         n_ = self.n_combobox.currentText()
         if mc:
-            ms = m_math_dict[m_](mc[-1], M, n - len(mc))
+            ms = mc + m_math_dict[m_](mc[-1], M, n - len(mc) + 1)[1:]
         else:
             ms = m_math_dict[m_](0, M, n)
         if nc:
-            ns = n_math_dict[n_](nc[-1], max_val, n - len(nc))
+            ns = nc + n_math_dict[n_](nc[-1], max_val, n - len(nc) + 1)[1:]
         else:
             ns = n_math_dict[n_](min_val, max_val, n)
         SL = self.stop_loss_textbox.get_value()
@@ -172,18 +172,18 @@ class MainWindow(QMainWindow):
 
     def test(self):
         try:
-            self.m_textbox.textbox.setText("800")
-            self.n_textbox.textbox.setText('3')
+            self.m_textbox.textbox.setText("8000")
+            self.n_textbox.textbox.setText('5')
             current_price = float(self.price_label.text())
-            self.min_textbox.textbox.setText(str(current_price - 1000))
+            self.min_textbox.textbox.setText(str(current_price - 100))
             # self.min_textbox.textbox.setText(str(1800))
 
-            self.max_textbox.textbox.setText(str(current_price + 1000))
+            self.max_textbox.textbox.setText(str(current_price + 100))
             # self.max_textbox.textbox.setText(str(2300))
             self.a.textbox.setText('25')
-            self.stop_loss_textbox.textbox.setText(str(current_price - 2000))
-            self.take_profit1_textbox.textbox.setText(str(current_price + 2000))
-            self.take_profit2_textbox.textbox.setText(str(current_price + 3000))
+            self.stop_loss_textbox.textbox.setText(str(current_price - 200))
+            self.take_profit1_textbox.textbox.setText(str(current_price + 200))
+            self.take_profit2_textbox.textbox.setText(str(current_price + 300))
             self.margin_textbox.textbox.setText('5')
         except:
             pass

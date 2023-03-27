@@ -30,6 +30,7 @@ class CBinanceThread(QThread):
         while self.running:
             self.test_connection()
             self.update_price()
+            self.update_pnl()
             time.sleep(1)
 
     def stop(self):
@@ -59,7 +60,10 @@ class CBinanceThread(QThread):
         self.update_price_signal.emit(price)
 
     def update_pnl(self):
-        self.update_pnl_signal.emit(self.pnl)
+        pnl = 0
+        for pos in self.position_list:
+            pnl = pos.pnl + pnl
+        self.update_pnl_signal.emit(self.pnl + pnl)
 
     def remove_position(self, position):
         self.pnl = self.pnl + position.pnl
@@ -88,6 +92,9 @@ class CBinanceThread(QThread):
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         if msg.exec() != QMessageBox.Ok:
             return
+        symbol, quantity, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = datas[0]
+        self.client.futures_change_leverage(symbol=self.symbol, leverage=int(margin))
+        # margin
 
         for data in datas:
             symbol, quantity, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data

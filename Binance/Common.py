@@ -70,7 +70,7 @@ def get_take_profit_form_limit(limit_order, take_profit, percent):
     return order_param
 
 
-def open_order(client, data):
+def open_order(client, data, limit_order_id):
     order_id = data['newClientOrderId']
     action = inspect.getouterframes(inspect.currentframe())[1][3]
     symbol = data['symbol']
@@ -86,6 +86,8 @@ def open_order(client, data):
     except:
         margin = 0
     log_order(action=action, order_id=order_id, symbol=symbol, profit=profit, quantity=quantity, margin=margin,
-              price=price)
+              price=price, limit_order_id=limit_order_id)
     order = client.futures_create_order(**data)
+    log_order(action='Make order success', order_id=order['clientOrderId'], symbol=symbol, profit=profit,
+              quantity=quantity, margin=margin, price=price, limit_order_id=limit_order_id)
     return order

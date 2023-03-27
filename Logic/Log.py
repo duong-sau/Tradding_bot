@@ -13,8 +13,18 @@ work_book = gc.open_by_key('1qrSDPFVZYW2k1oJGgrTqbPlfzp17wbM2q6Nua8aFUP4')
 log = work_book.worksheet(property='title', value='order_log')
 
 
-def log_order(order_id, action, symbol, price, quantity, margin, profit):
-    new_row_values = [order_id, action, symbol, price, quantity, margin, profit]
+def log_order(limit_order_id, order_id, action, symbol, price, quantity, margin, profit):
+    new_row_values = [limit_order_id, order_id, action, symbol, price, quantity, margin, profit]
+    log.append_table(values=[new_row_values])
+
+
+def log_fill(limit_order_id, order_id, symbol, profit):
+    new_row_values = [limit_order_id, order_id, "", symbol, "", "", "", profit]
+    log.append_table(values=[new_row_values])
+
+
+def log_cancel(limit_order_id, order_id, symbol, ):
+    new_row_values = [limit_order_id, order_id, "", symbol, "", "", "", ""]
     log.append_table(values=[new_row_values])
 
 

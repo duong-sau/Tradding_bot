@@ -53,13 +53,13 @@ def complete_data(data):
     n_ = data['n_']
     mc = data['mc']
     if mc:
-        m_list = mc + m_math_dict[m_](min_val=mc[-1], max_val=m, counter=n - len(mc))
+        m_list = mc + m_math_dict[m_](min_val=mc[-1], max_val=m, counter=n - len(mc) + 1)[1:]
     else:
         m_list = m_math_dict[m_](min_val=0, max_val=m, counter=n)
 
     nc = data['nc']
     if nc:
-        n_list = nc + n_math_dict[n_](min_val=mc[-1], max_val=max_val, counter=n - len(nc))
+        n_list = nc + n_math_dict[n_](min_val=nc[-1], max_val=max_val, counter=n - len(nc) + 1)[1:]
     else:
         n_list = n_math_dict[n_](min_val=min_val, max_val=max_val, counter=n)
     data['M'] = m_list

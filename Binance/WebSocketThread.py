@@ -27,8 +27,7 @@ class CSocketThread(QThread):
         print(message)
         if message['e'] == 'ORDER_TRADE_UPDATE':
             self.order_trigger_signal.emit(message['o'])
-        else:
-            print('nothing')
+
 
     def stop(self):
         self.socket.stop()
