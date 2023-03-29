@@ -134,7 +134,7 @@ class MainWindow(QMainWindow):
         X = self.margin_textbox.get_value()
         try:
 
-            E = sum(x * y for x, y in zip(ms, ns)) / n / sum(ns)
+            E = sum(x * y for x, y in zip(ms, ns)) / sum(ms)
 
             long = E - (E / X)
             short = E + (E / X)
