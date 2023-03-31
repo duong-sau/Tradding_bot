@@ -1,7 +1,20 @@
-uFIBONACCI = "+Fibonacci"
-dFIBONACCI = "-Fibonacci"
-NORMAL = "Normal"
+ulFIBONACCI = "ulFibonacci"
+dlFIBONACCI = "dlFibonacci"
+usFIBONACCI = "usFibonacci"
+dsFIBONACCI = "dsFibonacci"
 DISTANCE = 'Distance'
+
+
+uaFIBONACCI = "uaFibonacci"
+daFIBONACCI = "daFibonacci"
+NORMAL = "Normal"
+
+
+MCN = "M+ N"
+MCNT = "M+ N-"
+MNT = "M N-"
+
+probability_list = [MCN, MCNT, MNT]
 
 
 def distance(n):

@@ -1,6 +1,4 @@
-from Common.common import math_fibonacci, uFIBONACCI, dFIBONACCI, NORMAL, normal
-
-probability_list_m = [uFIBONACCI, dFIBONACCI, NORMAL]
+from Common.common import math_fibonacci, ulFIBONACCI, dlFIBONACCI, NORMAL, normal, uaFIBONACCI, daFIBONACCI
 
 
 def m_fibonacci(n):
@@ -41,7 +39,7 @@ def m_distribution(list_p, min_val, max_val):
 
 
 m_math_dict = {
-    uFIBONACCI: make_m_u_fibonacci,
-    dFIBONACCI: make_m_d_fibonacci,
+    uaFIBONACCI: make_m_u_fibonacci,
+    daFIBONACCI: make_m_d_fibonacci,
     NORMAL: make_normal,
 }

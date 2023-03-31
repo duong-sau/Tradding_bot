@@ -36,3 +36,4 @@ class TextBox(QWidget):
         if text.strip() == "":
             text = '0'
         return text
+

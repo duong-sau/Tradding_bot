@@ -2,13 +2,7 @@ import inspect
 
 import exrex
 
-from binance.helpers import round_step_size
-
 from Logic.Log import log_order
-
-
-def get_rounded_price(price: float) -> float:
-    return round_step_size(price, 0.10)
 
 
 def inflect_side(side):
@@ -20,12 +14,11 @@ def inflect_side(side):
 
 def get_limit_from_parameter(symbol, quantity, price, margin, side):
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
-    price = get_rounded_price(price)
     order_param = {
         'symbol': symbol,
         'side': side,
-        'price': float(round(price, 2)),
-        'quantity': float(round(quantity / price, 3)),
+        'price': price,
+        'quantity': quantity,
         'leverage': margin,
         'type': 'LIMIT',
         'newClientOrderId': order_id,
@@ -36,15 +29,14 @@ def get_limit_from_parameter(symbol, quantity, price, margin, side):
     return order_param
 
 
-def get_stop_loss_form_limit(limit_order, stop_loss, percent):
+def get_stop_loss_form_limit(limit_order, stop_loss, quantity):
     limit_side = limit_order['side']
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
-    stop_loss = get_rounded_price(stop_loss)
     order_param = {
         'symbol': limit_order['symbol'],
         'side': inflect_side(limit_side),
-        'quantity': float(round(float(limit_order['origQty']) * percent, 3)),
-        'stopPrice': float(round(stop_loss, 2)),
+        'quantity': quantity,
+        'stopPrice': stop_loss,
         'newClientOrderId': order_id,
         'reduceOnly': True,
         'type': 'STOP_MARKET',
@@ -53,15 +45,14 @@ def get_stop_loss_form_limit(limit_order, stop_loss, percent):
     return order_param
 
 
-def get_take_profit_form_limit(limit_order, take_profit, percent):
+def get_take_profit_form_limit(limit_order, take_profit, quantity):
     limit_side = limit_order['side']
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
-    take_profit = get_rounded_price(take_profit)
     order_param = {
         'symbol': limit_order['symbol'],
         'side': inflect_side(limit_side),
-        'quantity': float(round(float(limit_order['origQty']) * percent, 3)),
-        'stopPrice': float(round(take_profit, 2)),
+        'quantity': quantity,
+        'stopPrice': take_profit,
         'newClientOrderId': order_id,
         'reduceOnly': True,
         'type': 'TAKE_PROFIT_MARKET',
@@ -76,7 +67,6 @@ def open_order(client, data, limit_order_id):
     symbol = data['symbol']
     profit = 0
     quantity = data['quantity']
-    margin = 1
     try:
         price = data['price']
     except:

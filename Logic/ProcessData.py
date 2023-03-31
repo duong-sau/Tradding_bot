@@ -1,7 +1,5 @@
 from PyQt5.QtWidgets import QMessageBox
-
-from Common.m_common import m_math_dict
-from Common.n_common import n_math_dict
+from binance.helpers import round_step_size
 
 
 def check_val_data(data, msg_box):
@@ -44,41 +42,41 @@ def pre_proces(budgets, orders, stop_loss, take_profit, take_profit2, margin):
     return True
 
 
-def complete_data(data):
-    m = data['M']
-    n = data['n']
-    min_val = data['min']
-    max_val = data['max']
-    m_ = data['m_']
-    n_ = data['n_']
-    mc = data['mc']
-    if mc:
-        m_list = mc + m_math_dict[m_](min_val=mc[-1], max_val=m, counter=n - len(mc) + 1)[1:]
-    else:
-        m_list = m_math_dict[m_](min_val=0, max_val=m, counter=n)
-
-    nc = data['nc']
-    if nc:
-        n_list = nc + n_math_dict[n_](min_val=nc[-1], max_val=max_val, counter=n - len(nc) + 1)[1:]
-    else:
-        n_list = n_math_dict[n_](min_val=min_val, max_val=max_val, counter=n)
-    data['M'] = m_list
-    data['n'] = n_list
-    return data
-
-
 def process(data):
     requests = []
     data, open_type = data
-    data = complete_data(data)
-    budgets, orders = data['M'], data['n']
+    budgets, orders = data['m_list'], data['n_list']
 
     if not pre_proces(budgets, orders, data['sl'], data['tp1'], data['tp2'], data['margin']):
         return False, []
 
     for i in range(len(orders)):
+        symbol = data['symbol']
+        price = round_step_size(orders[i], 0.10)
+        quantity = round(budgets[i] / price, 3)
+
+        stop_loss = round_step_size(data['sl'], 0.10)
+        take_profit_1 = round_step_size(data['tp1'], 0.10)
+        take_profit_2 = round_step_size(data['tp2'], 0.10)
+
+        a_quantity = round(quantity*data['a'], 3)
+        b_quantity = quantity - a_quantity
+
+        if a_quantity < 0.001 or b_quantity < 0.001:
+            a_quantity = quantity
+            b_quantity = 0
+
+        margin = data['margin']
         requests.append(
-            (data['symbol'], budgets[i], orders[i], data['sl'], data['tp1'], data['a'], data['tp2'], data['b'],
-             data['margin'], open_type))
+            (symbol,
+             quantity,
+             price,
+             stop_loss,
+             take_profit_1,
+             a_quantity,
+             take_profit_2,
+             b_quantity,
+             margin,
+             open_type))
 
     return True, requests

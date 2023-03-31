@@ -11,7 +11,7 @@ FILL = 'FILLED'
 
 
 class OTOListener:
-    def __init__(self, client, destroy_call_back, parameter, stop_loss, take_profit, a, take_profit_2, b) -> None:
+    def __init__(self, client, destroy_call_back, parameter, stop_loss, take_profit, a_quantity, take_profit_2, b_quantity) -> None:
 
         self.limit_order = None
         self.destroy_call_back = destroy_call_back
@@ -37,10 +37,10 @@ class OTOListener:
         self.stop_loss = stop_loss
 
         self.take_profit_1 = take_profit
-        self.a = a
+        self.a_quantity = a_quantity
 
         self.take_profit_2 = take_profit_2
-        self.b = b
+        self.b_quantity = b_quantity
         return
 
     def destroy(self):
@@ -70,26 +70,26 @@ class OTOListener:
 
     def handle_take_profit_1(self):
         self.cancel_stop_loss_1_order()
-        self.update_pnl(self.take_profit_1, self.a)
+        self.update_pnl(self.take_profit_1, self.a_quantity)
         log_fill(limit_order_id=self.limit_order['clientOrderId'], order_id=list(self.action_dict.keys())[3],
                  profit=self.pnl, symbol=self.parameter['symbol'])
 
     def handle_take_profit_2(self):
         self.cancel_stop_loss_2_order()
-        self.update_pnl(self.take_profit_2, self.b)
+        self.update_pnl(self.take_profit_2, self.b_quantity)
         log_fill(limit_order_id=self.limit_order['clientOrderId'], order_id=list(self.action_dict.keys())[4],
                  profit=self.pnl, symbol=self.parameter['symbol'])
         self.destroy()
 
     def handle_stop_loss_1(self):
         self.cancel_take_profit_1_order()
-        self.update_pnl(self.stop_loss, self.a)
+        self.update_pnl(self.stop_loss, self.a_quantity)
         log_fill(limit_order_id=self.limit_order['clientOrderId'], order_id=list(self.action_dict.keys())[1],
                  profit=self.pnl, symbol=self.parameter['symbol'])
 
     def handle_stop_loss_2(self):
         self.cancel_take_profit_2_order()
-        self.update_pnl(self.stop_loss, self.b)
+        self.update_pnl(self.stop_loss, self.b_quantity)
         log_fill(limit_order_id=self.limit_order['clientOrderId'], order_id=list(self.action_dict.keys())[2],
                  profit=self.pnl, symbol=self.parameter['symbol'])
         self.destroy()
@@ -121,7 +121,7 @@ class OTOListener:
     # ----------------------------------------------------------------------------------------------------
     def make_stop_loss_1_order(self):
         try:
-            parameter = get_stop_loss_form_limit(self.limit_order, self.stop_loss, self.a)
+            parameter = get_stop_loss_form_limit(self.limit_order, self.stop_loss, self.a_quantity)
             order = open_order(self.client, parameter, self.limit_order['clientOrderId'])
             limit_id = order['clientOrderId']
             self.replace_key(limit_id, 'stop1')
@@ -131,7 +131,7 @@ class OTOListener:
 
     def make_stop_loss_2_order(self):
         try:
-            parameter = get_stop_loss_form_limit(self.limit_order, self.stop_loss, self.b)
+            parameter = get_stop_loss_form_limit(self.limit_order, self.stop_loss, self.b_quantity)
             order = open_order(self.client, parameter, self.limit_order['clientOrderId'])
             limit_id = order['clientOrderId']
             self.replace_key(limit_id, 'stop2')
@@ -141,7 +141,7 @@ class OTOListener:
 
     def make_take_profit_1_order(self):
         try:
-            parameter = get_take_profit_form_limit(self.limit_order, self.take_profit_1, self.a)
+            parameter = get_take_profit_form_limit(self.limit_order, self.take_profit_1, self.a_quantity)
             order = open_order(self.client, parameter, self.limit_order['clientOrderId'])
             limit_id = order['clientOrderId']
             self.replace_key(limit_id, 'take1')
@@ -151,7 +151,7 @@ class OTOListener:
 
     def make_take_profit_2_order(self):
         try:
-            parameter = get_take_profit_form_limit(self.limit_order, self.take_profit_2, self.b)
+            parameter = get_take_profit_form_limit(self.limit_order, self.take_profit_2, self.b_quantity)
             order = open_order(self.client, parameter, self.limit_order['clientOrderId'])
             limit_id = order['clientOrderId']
             self.replace_key(limit_id, 'take2')

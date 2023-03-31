@@ -2,6 +2,8 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QDesktopWidget
 
+from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, ulFIBONACCI, dlFIBONACCI, \
+    usFIBONACCI, dsFIBONACCI, uaFIBONACCI
 from Common.m_common import m_math_dict
 from Common.n_common import n_math_dict
 from View.addvance_view import AdvanceView
@@ -32,8 +34,9 @@ class MainWindow(QMainWindow):
         self.max_textbox = self.input_view.max_textbox
 
         self.combobox_view = ComboboxView()
-        self.m_combobox = self.combobox_view.m_combobox
-        self.n_combobox = self.combobox_view.n_combobox
+        self.m_combobox = self.combobox_view.probability_box
+        self.tx_long = self.combobox_view.long_radio
+
         self.margin_textbox = self.combobox_view.margin_input
 
         self.advance_view = AdvanceView()
@@ -62,8 +65,8 @@ class MainWindow(QMainWindow):
 
     def create_view(self):
         desktop = QDesktopWidget()
-        screenRect = desktop.screenGeometry()
-        self.setGeometry(0, 0, screenRect.width(), screenRect.height() - 50)
+        screen_rect = desktop.screenGeometry()
+        self.setGeometry(0, 0, screen_rect.width(), screen_rect.height() - 50)
         self.setWindowTitle('Trading Bot')
 
     def create_layout(self):
@@ -112,24 +115,11 @@ class MainWindow(QMainWindow):
 
     def pnl_cal(self):
         M = self.m_textbox.get_value()
-        n = self.n_textbox.get_value()
-        mc = self.m_allocator.get_value()
-        nc = self.n_allocator.get_value()
-        min_val = self.min_textbox.get_value()
-        max_val = self.max_textbox.get_value()
-        m_ = self.m_combobox.currentText()
-        n_ = self.n_combobox.currentText()
-        if mc:
-            ms = mc + m_math_dict[m_](mc[-1], M, n - len(mc) + 1)[1:]
-        else:
-            ms = m_math_dict[m_](0, M, n)
-        if nc:
-            ns = nc + n_math_dict[n_](nc[-1], max_val, n - len(nc) + 1)[1:]
-        else:
-            ns = n_math_dict[n_](min_val, max_val, n)
+        ms = self.calculator_m()
+        ns = self.calculator_n()
         SL = self.stop_loss_textbox.get_value()
         TP1 = self.take_profit1_textbox.get_value()
-        a = self.a.get_value()/100
+        a = self.a.get_value() / 100
         TP2 = self.take_profit2_textbox.get_value()
         X = self.margin_textbox.get_value()
         try:
@@ -148,23 +138,80 @@ class MainWindow(QMainWindow):
 
     def get_value(self):
         data = {
-            'M': self.m_textbox.get_value(),
-            'n': self.n_textbox.get_value(),
-            'nc': self.n_allocator.get_value(),
-            'mc': self.m_allocator.get_value(),
+            'm_list': self.calculator_m(),
+            'n_list': self.calculator_n(),
             'min': self.min_textbox.get_value(),
             'max': self.max_textbox.get_value(),
             'sl': self.stop_loss_textbox.get_value(),
             'tp1': self.take_profit1_textbox.get_value(),
-            'a': self.a.get_value()/100,
+            'a': self.a.get_value() / 100,
             'tp2': self.take_profit2_textbox.get_value(),
-            'b': self.b.get_value()/100,
-            'm_': self.m_combobox.currentText(),
-            'n_': self.n_combobox.currentText(),
+            'b': self.b.get_value() / 100,
             'symbol': self.symbol_select.currentText(),
             'margin': self.margin_textbox.get_value()
         }
         return data
+
+    def calculator_m(self):
+        m_probability = self.get_m_probability()
+        m = self.m_textbox.get_value()
+        n = self.n_textbox.get_value()
+        mc = self.m_allocator.get_value()
+        if mc:
+            m_list = mc + m_math_dict[m_probability](mc[-1], m, n - len(mc) + 1)[1:]
+        else:
+            m_list = m_math_dict[m_probability](0, m, n)
+        return m_list
+
+    def calculator_n(self):
+        n = self.n_textbox.get_value()
+        nc = self.n_allocator.get_value()
+        min_val = self.min_textbox.get_value()
+        max_val = self.max_textbox.get_value()
+        n_probability = self.get_n_probability()
+
+        if nc:
+            n_list = nc + n_math_dict[n_probability](nc[-1], max_val, n - len(nc) + 1)[1:]
+        else:
+            n_list = n_math_dict[n_probability](min_val, max_val, n)
+        return n_list
+
+    def get_n_probability(self):
+        probability = self.m_combobox.currentText()
+        long = self.tx_long.isChecked()
+        if long:
+
+            if probability == MCN:
+                m_probability = DISTANCE
+            elif probability == MCNT:
+                m_probability = ulFIBONACCI
+            elif probability == MNT:
+                m_probability = dlFIBONACCI
+            else:
+                m_probability = ""
+        else:
+
+            if probability == MCN:
+                m_probability = DISTANCE
+            elif probability == MCNT:
+                m_probability = usFIBONACCI
+            elif probability == MNT:
+                m_probability = dsFIBONACCI
+            else:
+                m_probability = ""
+        return m_probability
+
+    def get_m_probability(self):
+        probability = self.m_combobox.currentText()
+        if probability == MCN:
+            m_probability = uaFIBONACCI
+        elif probability == MCNT:
+            m_probability = uaFIBONACCI
+        elif probability == MNT:
+            m_probability = NORMAL
+        else:
+            m_probability = ""
+        return m_probability
 
     @QtCore.pyqtSlot(float)
     def update_pnl(self, pnl):
