@@ -11,7 +11,8 @@ FILL = 'FILLED'
 
 
 class OTOListener:
-    def __init__(self, client, destroy_call_back, parameter, stop_loss, take_profit, a_quantity, take_profit_2, b_quantity) -> None:
+    def __init__(self, client, destroy_call_back, parameter, stop_loss, take_profit, a_quantity, take_profit_2,
+                 b_quantity) -> None:
 
         self.limit_order = None
         self.destroy_call_back = destroy_call_back
@@ -30,6 +31,7 @@ class OTOListener:
         }
 
         self.pnl = 0
+        self.state = ""
 
         self.client = client
         self.parameter = parameter
@@ -41,6 +43,7 @@ class OTOListener:
 
         self.take_profit_2 = take_profit_2
         self.b_quantity = b_quantity
+
         return
 
     def destroy(self):
@@ -50,6 +53,7 @@ class OTOListener:
 
     def make_limit_order(self):
         try:
+            self.state = "OPEN"
             limit_order = open_order(self.client, self.parameter, self.parameter['newClientOrderId'])
             self.limit_order = limit_order
             limit_id = limit_order['clientOrderId']
@@ -62,17 +66,22 @@ class OTOListener:
             self.destroy()
 
     def handle_limit(self):
+        self.state = "V1"
         self.make_stop_loss_1_order()
         self.make_stop_loss_2_order()
 
-        self.make_take_profit_1_order()
-        self.make_take_profit_2_order()
+        if self.b_quantity != 0:
+            self.make_take_profit_1_order()
+            self.make_take_profit_2_order()
 
     def handle_take_profit_1(self):
+        self.state = 'V2'
         self.cancel_stop_loss_1_order()
         self.update_pnl(self.take_profit_1, self.a_quantity)
         log_fill(limit_order_id=self.limit_order['clientOrderId'], order_id=list(self.action_dict.keys())[3],
                  profit=self.pnl, symbol=self.parameter['symbol'])
+        if self.b_quantity == 0:
+            self.destroy()
 
     def handle_take_profit_2(self):
         self.cancel_stop_loss_2_order()
@@ -82,10 +91,13 @@ class OTOListener:
         self.destroy()
 
     def handle_stop_loss_1(self):
+        self.state = 'V2'
         self.cancel_take_profit_1_order()
         self.update_pnl(self.stop_loss, self.a_quantity)
         log_fill(limit_order_id=self.limit_order['clientOrderId'], order_id=list(self.action_dict.keys())[1],
                  profit=self.pnl, symbol=self.parameter['symbol'])
+        if self.b_quantity == 0:
+            self.destroy()
 
     def handle_stop_loss_2(self):
         self.cancel_take_profit_2_order()
@@ -196,6 +208,7 @@ class OTOListener:
                    symbol=self.limit_order['symbol'])
 
     def cancel_take_profit_2_order(self):
+
         order_id = list(self.action_dict.keys())[4]
         if order_id == 'take2':
             return
@@ -220,3 +233,14 @@ class OTOListener:
             self.action_dict = new_dict
         else:
             return
+
+    def get_pnl(self, price):
+        if self.state == "OPEN":
+            pnl = 0
+        elif self.state == "V1":
+            pnl = self.m * (price - self.e) * self.margin / self.e
+        elif self.state == "V2":
+            pnl = self.pnl + self.b_quantity * (price - self.e) * self.margin / self.e
+        else:
+            pnl = 0
+        return pnl

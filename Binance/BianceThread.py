@@ -24,6 +24,7 @@ class CBinanceThread(QThread):
         self.position_list = []
         self.running = True
         self.pnl = 0
+        self.current_price = 0
         self.symbol = 'BTCUSDT'
         self.client = Client(api_key, api_secret, testnet=True)
 
@@ -58,12 +59,13 @@ class CBinanceThread(QThread):
     def update_price(self):
         ticker = self.client.futures_mark_price(symbol=self.symbol)
         price = ticker['markPrice']
+        self.current_price = float(price)
         self.update_price_signal.emit(price)
 
     def update_pnl(self):
         pnl = 0
         for pos in self.position_list:
-            pnl = pos.pnl + pnl
+            pnl = pos.get_pnl(self.current_price)
         self.update_pnl_signal.emit(self.pnl + pnl)
 
     def remove_position(self, position):
