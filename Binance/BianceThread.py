@@ -66,7 +66,8 @@ class CBinanceThread(QThread):
         pnl = 0
         for pos in self.position_list:
             pnl = pos.get_pnl(self.current_price)
-        self.update_pnl_signal.emit(self.pnl + pnl)
+            print(pnl)
+        self.update_pnl_signal.emit((self.pnl + pnl)*100)
 
     def remove_position(self, position):
         self.pnl = self.pnl + position.pnl

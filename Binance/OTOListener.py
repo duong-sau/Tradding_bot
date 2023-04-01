@@ -178,9 +178,13 @@ class OTOListener:
         order_id = list(self.action_dict.keys())[1]
         if order_id == 'stop2':
             return
+        param = {
+            'symbol': self.s,
+            'orderId': order_id
+        }
         self.client.futures_cancel_order(
             symbol=self.s,
-            orderId=order_id
+            order_id=order_id
         )
         log_cancel(limit_order_id=self.limit_order['clientOrderId'], order_id=order_id,
                    symbol=self.limit_order['symbol'])
@@ -191,7 +195,7 @@ class OTOListener:
             return
         self.client.futures_cancel_order(
             symbol=self.s,
-            orderId=order_id
+            order_id=order_id
         )
         log_cancel(limit_order_id=self.limit_order['clientOrderId'], order_id=order_id,
                    symbol=self.limit_order['symbol'])
@@ -202,7 +206,7 @@ class OTOListener:
             return
         self.client.futures_cancel_order(
             symbol=self.s,
-            orderId=order_id
+            order_id=order_id
         )
         log_cancel(limit_order_id=self.limit_order['clientOrderId'], order_id=order_id,
                    symbol=self.limit_order['symbol'])
@@ -214,7 +218,7 @@ class OTOListener:
             return
         self.client.futures_cancel_order(
             symbol=self.s,
-            orderId=order_id
+            order_id=order_id
         )
         log_cancel(limit_order_id=self.limit_order['clientOrderId'], order_id=order_id,
                    symbol=self.limit_order['symbol'])

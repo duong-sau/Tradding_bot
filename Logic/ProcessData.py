@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import QMessageBox
 from binance.helpers import round_step_size
-from decimal import Decimal
 
 def check_val_data(data, msg_box):
     if type(data) == list:
@@ -52,18 +51,18 @@ def process(data):
 
     for i in range(len(orders)):
         symbol = data['symbol']
-        price = Decimal(round_step_size(orders[i], 0.10))
-        quantity = Decimal(round(budgets[i] / price, 3))
+        price = round_step_size(orders[i], 0.10)
+        quantity = round(budgets[i] / price, 3)
 
-        stop_loss = Decimal(round_step_size(data['sl'], 0.10))
-        take_profit_1 = Decimal(round_step_size(data['tp1'], 0.10))
-        take_profit_2 = Decimal(round_step_size(data['tp2'], 0.10))
+        stop_loss = round_step_size(data['sl'], 0.10)
+        take_profit_1 = round_step_size(data['tp1'], 0.10)
+        take_profit_2 = round_step_size(data['tp2'], 0.10)
 
-        a_quantity = Decimal(round(quantity*data['a'], 3))
-        b_quantity = Decimal(quantity - a_quantity)
+        a_quantity = round(quantity*data['a'], 3)
+        b_quantity = round(quantity - a_quantity, 3)
 
         if a_quantity < 0.001 or b_quantity < 0.001:
-            a_quantity = Decimal(quantity)
+            a_quantity = quantity
             b_quantity = 0
 
         margin = data['margin']

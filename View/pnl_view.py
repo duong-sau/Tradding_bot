@@ -53,6 +53,7 @@ class PNLView(QWidget):
 
     def update(self):
         # Ghi log vào QPlainTextEdit
+        self.clear_log()
         message = message_format
         message = re.sub('%long%', self.long, message)
         message = re.sub('%short%', self.short, message)
@@ -72,7 +73,6 @@ class PNLView(QWidget):
         self.update()
 
     def set_text(self, long, short, rx, sl, tp1, tp2):
-        self.clear_log()
         self.long, self.short, self.rx, self.sl, self.tp1, self.tp2 = str(round(long, 3)), str(round(short, 3)), str(round(rx, 2)), str(round(sl, 3)), str(round(tp1, 3)), str(round(tp2, 3))
         self.update()
 

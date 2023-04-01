@@ -24,10 +24,8 @@ class CSocketThread(QThread):
             msg_box("kết nối tới binance lỗi")
 
     def process_message(self, message):
-        print(message)
         if message['e'] == 'ORDER_TRADE_UPDATE':
             self.order_trigger_signal.emit(message['o'])
-
 
     def stop(self):
         self.socket.stop()
