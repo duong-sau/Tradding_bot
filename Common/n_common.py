@@ -2,6 +2,8 @@ from Common.common import math_fibonacci, ulFIBONACCI, dlFIBONACCI, DISTANCE, di
 
 
 def make_distance(min_val, max_val, counter):
+    if counter == 1:
+        return [min_val]
     distance_list = distance(counter)
     result = short_distribution(distance_list, min_val, max_val)
     return result
@@ -22,7 +24,9 @@ def make_u_long_fibonacci(min_val, max_val, counter):
 
 def long_distribution(list_p, min_val, max_val):
     if len(list_p) == 0:
-        return []
+        return [0]
+    if len(list_p) == 1:
+        return [1]
     best = max(list_p)
 
     round_values = []
@@ -47,7 +51,9 @@ def make_u_short_fibonacci(min_val, max_val, counter):
 
 def short_distribution(list_p, min_val, max_val):
     if len(list_p) == 0:
-        return []
+        return [0]
+    if len(list_p) == 1:
+        return [1]
     best = max(list_p)
 
     round_values = []

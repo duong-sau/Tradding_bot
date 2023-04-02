@@ -13,14 +13,14 @@ class CSocketThread(QThread):
         super(CSocketThread, self).__init__(parent)
         self.conn_key = None
         self.running = None
-        self.socket = ThreadedWebsocketManager(api_secret=api_secret, api_key=api_key, testnet=True)
+        self.socket = ThreadedWebsocketManager(api_secret=api_secret, api_key=api_key, tld='vi', testnet=True)
         self.retry()
 
     def retry(self):
         try:
             self.socket.start()
             self.conn_key = self.socket.start_futures_user_socket(callback=self.process_message)
-        except(BinanceAPIException, BinanceRequestException):
+        except:
             msg_box("kết nối tới binance lỗi")
 
     def process_message(self, message):
@@ -31,4 +31,7 @@ class CSocketThread(QThread):
         self.socket.stop()
 
     def run(self) -> None:
-        self.socket.join()
+        try:
+            self.socket.join()
+        except:
+            msg_box("socket", "socket error")

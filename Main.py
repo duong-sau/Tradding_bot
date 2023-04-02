@@ -81,6 +81,9 @@ if __name__ == '__main__':
         app.exit(0)
     try:
         error = app.exec()
+        binance_thread.stop()
+        logic_thread.stop()
+        socket_thread.stop()
         log_fail("User exit", str(sys.exc_info()[1]))
         sys.exit(0)
     except:

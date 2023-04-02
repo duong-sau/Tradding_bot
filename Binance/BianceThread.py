@@ -28,12 +28,20 @@ class CBinanceThread(QThread):
         self.symbol = 'BTCUSDT'
         self.client = Client(api_key, api_secret, testnet=True)
 
+    def retry(self):
+        self.client = Client(api_key, api_secret, testnet=True)
+        self.run()
+
     def run(self):
-        while self.running:
-            self.test_connection()
-            self.update_price()
-            self.update_pnl()
-            time.sleep(1)
+        try:
+            while self.running:
+                self.test_connection()
+                self.update_price()
+                self.update_pnl()
+                time.sleep(0.25)
+        except:
+            print('retry')
+            self.retry()
 
     def stop(self):
         self.running = False
@@ -59,15 +67,15 @@ class CBinanceThread(QThread):
     def update_price(self):
         ticker = self.client.futures_mark_price(symbol=self.symbol)
         price = ticker['markPrice']
-        self.current_price = float(price)
+        last_ticker = self.client.futures_symbol_ticker(symbol=self.symbol)
+        self.current_price = float(last_ticker['price'])
         self.update_price_signal.emit(price)
 
     def update_pnl(self):
         pnl = 0
         for pos in self.position_list:
             pnl = pos.get_pnl(self.current_price)
-            print(pnl)
-        self.update_pnl_signal.emit((self.pnl + pnl)*100)
+        self.update_pnl_signal.emit(round(self.pnl + pnl, 3))
 
     def remove_position(self, position):
         self.pnl = self.pnl + position.pnl

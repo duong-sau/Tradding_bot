@@ -65,8 +65,9 @@ class OTOListener:
             msg_box(error)
             self.destroy()
 
-    def handle_limit(self):
+    def handle_limit(self, ap):
         self.state = "V1"
+        self.e = float(ap)
         self.make_stop_loss_1_order()
         self.make_stop_loss_2_order()
 
@@ -74,7 +75,7 @@ class OTOListener:
             self.make_take_profit_1_order()
             self.make_take_profit_2_order()
 
-    def handle_take_profit_1(self):
+    def handle_take_profit_1(self, ap):
         self.state = 'V2'
         self.cancel_stop_loss_1_order()
         self.update_pnl(self.take_profit_1, self.a_quantity)
@@ -83,14 +84,14 @@ class OTOListener:
         if self.b_quantity == 0:
             self.destroy()
 
-    def handle_take_profit_2(self):
+    def handle_take_profit_2(self, ap):
         self.cancel_stop_loss_2_order()
         self.update_pnl(self.take_profit_2, self.b_quantity)
         log_fill(limit_order_id=self.limit_order['clientOrderId'], order_id=list(self.action_dict.keys())[4],
                  profit=self.pnl, symbol=self.parameter['symbol'])
         self.destroy()
 
-    def handle_stop_loss_1(self):
+    def handle_stop_loss_1(self, ap):
         self.state = 'V2'
         self.cancel_take_profit_1_order()
         self.update_pnl(self.stop_loss, self.a_quantity)
@@ -99,7 +100,7 @@ class OTOListener:
         if self.b_quantity == 0:
             self.destroy()
 
-    def handle_stop_loss_2(self):
+    def handle_stop_loss_2(self, ap):
         self.cancel_take_profit_2_order()
         self.update_pnl(self.stop_loss, self.b_quantity)
         log_fill(limit_order_id=self.limit_order['clientOrderId'], order_id=list(self.action_dict.keys())[2],
@@ -109,7 +110,7 @@ class OTOListener:
     def fill_handle(self, event):
         client_id = event['c']
         if client_id in self.action_dict.keys():
-            self.action_dict[client_id]()
+            self.action_dict[client_id](ap=event['ap'])
         else:
             return
 
@@ -126,7 +127,9 @@ class OTOListener:
             msg_box(sys.exc_info()[1])
 
     def update_pnl(self, price, percent):
-        self.pnl = self.pnl + percent * (price - self.e) * self.margin / self.e
+        if self.parameter['side'] != 'BUY':
+            percent = -percent
+        self.pnl = self.pnl + percent * (price - self.e) * self.margin
 
     # ----------------------------------------------------------------------------------------------------
     # Create Order
@@ -239,12 +242,19 @@ class OTOListener:
             return
 
     def get_pnl(self, price):
+        if self.parameter['side'] == 'BUY':
+            b_quantity = self.b_quantity
+            m = self.m
+        else:
+            b_quantity = -self.b_quantity
+            m = - self.m
+
         if self.state == "OPEN":
             pnl = 0
         elif self.state == "V1":
-            pnl = self.m * (price - self.e) * self.margin / self.e
+            pnl = m * (price - self.e) * self.margin
         elif self.state == "V2":
-            pnl = self.pnl + self.b_quantity * (price - self.e) * self.margin / self.e
+            pnl = self.pnl + b_quantity * (price - self.e) * self.margin
         else:
             pnl = 0
         return pnl

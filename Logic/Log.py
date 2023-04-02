@@ -1,4 +1,6 @@
+import asyncio
 import inspect
+import threading
 
 import pygsheets
 
@@ -15,20 +17,30 @@ log = work_book.worksheet(property='title', value='order_log')
 
 def log_order(limit_order_id, order_id, action, symbol, price, quantity, margin, profit):
     new_row_values = [limit_order_id, order_id, action, symbol, price, quantity, margin, profit]
-    log.append_table(values=[new_row_values])
+    put_log(new_row_values)
 
 
 def log_fill(limit_order_id, order_id, symbol, profit):
     new_row_values = [limit_order_id, order_id, "", symbol, "", "", "", profit]
-    log.append_table(values=[new_row_values])
+    put_log(new_row_values)
 
 
 def log_cancel(limit_order_id, order_id, symbol, ):
     new_row_values = [limit_order_id, order_id, "", symbol, "", "", "", ""]
-    log.append_table(values=[new_row_values])
+    put_log(new_row_values)
 
 
 def log_fail(limit_id, content):
     action = inspect.getouterframes(inspect.currentframe())[1][3]
     row = [limit_id, action, content]
-    log.append_table(values=[row])
+    put_log(row)
+
+
+def put_log(row):
+    t = threading.Thread(target=log_wrap, args=(row,))
+    t.start()
+
+
+def log_wrap(row):
+    # log.append_table(values=[row])
+    a = 0
