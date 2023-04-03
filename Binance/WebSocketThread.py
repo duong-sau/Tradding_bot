@@ -34,4 +34,4 @@ class CSocketThread(QThread):
         try:
             self.socket.join()
         except:
-            msg_box("socket", "socket error")
+            self.run()

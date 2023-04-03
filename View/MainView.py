@@ -112,6 +112,7 @@ class MainWindow(QMainWindow):
 
     def timer_run(self):
         self.pnl_cal()
+        self.update_n_max()
 
     def pnl_cal(self):
         M = self.m_textbox.get_value()
@@ -134,7 +135,7 @@ class MainWindow(QMainWindow):
             tp2 = M * (1 - a) * abs(TP2 - E) * X / E
             self.pnl_view.set_text(long, short, rx, sl, tp1, tp2)
         except:
-            self.pnl_view.log_cant_cal()
+            pass
 
     def get_value(self):
         data = {
@@ -213,9 +214,35 @@ class MainWindow(QMainWindow):
             m_probability = ""
         return m_probability
 
-    @QtCore.pyqtSlot(float)
-    def update_pnl(self, pnl):
-        self.pnl_view.update_pnl(pnl)
+    def update_n_max(self):
+        try:
+            n = self.calculator_n_max()
+            self.n_textbox.label.setText(f'Số lệnh (max: {n})')
+        except:
+            pass
+
+    def calculator_n_max(self):
+
+        margin = self.margin_textbox.get_value()
+
+        m_probability = self.get_m_probability()
+        m = self.m_textbox.get_value()
+
+        n_probability = self.get_n_probability()
+        min_val = self.min_textbox.get_value()
+        max_val = self.max_textbox.get_value()
+
+        for n in range(2, 50, 1):
+            n_list = n_math_dict[n_probability](min_val, max_val, n)
+            m_list = m_math_dict[m_probability](0, m, n)
+            for m_val, n_val in zip(m_list, n_list):
+
+                if round(margin * m_val / n_val, 3) < 0.001:
+                    return n - 1
+
+    @QtCore.pyqtSlot(float, float)
+    def update_pnl(self, pnl, sum_pnl):
+        self.pnl_view.update_pnl(pnl, sum_pnl)
 
     def test(self):
         try:

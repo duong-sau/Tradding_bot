@@ -11,6 +11,7 @@ Giá thanh lý           LONG     : %long%
 
 Margin đề xuất         RX       : %rx%
                        PNL      : %pnl%
+                       SUM-PNL  : %sumpnl%
 
 ----------------------------------------------------------
 STOP LOSS     (%) : %sl%
@@ -22,7 +23,8 @@ T___ P__2     (%) : %tp2%
 class PNLView(QWidget):
     def __init__(self, test, parent=None):
         super().__init__(parent)
-        self.long, self.short, self.rx, self.sl, self.tp1, self.tp2, self.pnl = "", "", "", "", "", "", 0
+        self.pnl, self.sum_pnl = 0, 0
+        self.long, self.short, self.rx, self.sl, self.tp1, self.tp2 = "", "", "", "", "", ""
         self.setWindowTitle("Log Window")
 
         # Tạo QPlainTextEdit để hiển thị console log
@@ -59,6 +61,7 @@ class PNLView(QWidget):
         message = re.sub('%short%', self.short, message)
         message = re.sub('%rx%', self.rx, message)
         message = re.sub('%pnl%', str(self.pnl), message)
+        message = re.sub('%sumpnl%', str(self.sum_pnl), message)
         message = re.sub('%sl%', self.sl, message)
         message = re.sub('%tp1%', self.tp1, message)
         message = re.sub('%tp2%', self.tp2, message)
@@ -68,8 +71,9 @@ class PNLView(QWidget):
         # Xóa nội dung trong QPlainTextEdit
         self.log_console.clear()
 
-    def update_pnl(self, pnl):
+    def update_pnl(self, pnl, sum_pnl):
         self.pnl = pnl
+        self.sum_pnl = sum_pnl
         self.update()
 
     def set_text(self, long, short, rx, sl, tp1, tp2):

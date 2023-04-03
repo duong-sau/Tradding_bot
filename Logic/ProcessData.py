@@ -1,6 +1,9 @@
 from PyQt5.QtWidgets import QMessageBox
 from binance.helpers import round_step_size
 
+from View.a_common.MsgBox import msg_box
+
+
 def check_val_data(data, msg_box):
     if type(data) == list:
         for value in data:
@@ -51,21 +54,25 @@ def process(data):
 
     for i in range(len(orders)):
         symbol = data['symbol']
-        price = round_step_size(orders[i], 0.10)
-        quantity = round(budgets[i] / price, 3)
+        margin = data['margin']
+
+        price = round_step_size(orders[i], 0.1)
+        quantity = round(budgets[i] * margin / price, 3)
+        if quantity < 0.001:
+            msg_box("Lỗi", "Trong budget có giá trị bằng 0")
+            return False, []
 
         stop_loss = round_step_size(data['sl'], 0.10)
         take_profit_1 = round_step_size(data['tp1'], 0.10)
         take_profit_2 = round_step_size(data['tp2'], 0.10)
 
-        a_quantity = round(quantity*data['a'], 3)
+        a_quantity = round(quantity * data['a'], 3)
         b_quantity = round(quantity - a_quantity, 3)
 
         if a_quantity < 0.001 or b_quantity < 0.001:
             a_quantity = quantity
             b_quantity = 0
 
-        margin = data['margin']
         requests.append(
             (symbol,
              quantity,

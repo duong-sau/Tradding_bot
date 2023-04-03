@@ -16,7 +16,7 @@ from View.a_common.MsgBox import msg_box
 
 class CBinanceThread(QThread):
     update_price_signal = pyqtSignal(str)
-    update_pnl_signal = pyqtSignal(float)
+    update_pnl_signal = pyqtSignal(float, float)
     set_symbols_signal = pyqtSignal(list)
 
     def __init__(self):
@@ -47,11 +47,7 @@ class CBinanceThread(QThread):
         self.running = False
 
     def test_connection(self):
-        try:
-            self.client.ping()
-        except (BinanceRequestException, BinanceAPIException):
-            msg_box('Không thể kết nối đến server')
-            sys.exit(0)
+        pass
 
     def set_symbols(self):
         exchange_info = self.client.get_exchange_info()
@@ -75,7 +71,7 @@ class CBinanceThread(QThread):
         pnl = 0
         for pos in self.position_list:
             pnl = pos.get_pnl(self.current_price)
-        self.update_pnl_signal.emit(round(self.pnl + pnl, 3))
+        self.update_pnl_signal.emit(round(pnl, 3), round(self.pnl, 3))
 
     def remove_position(self, position):
         self.pnl = self.pnl + position.pnl
