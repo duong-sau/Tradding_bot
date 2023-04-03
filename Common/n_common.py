@@ -1,4 +1,13 @@
-from Common.common import math_fibonacci, ulFIBONACCI, dlFIBONACCI, DISTANCE, distance, usFIBONACCI, dsFIBONACCI
+from Common.common import math_fibonacci, ulFIBONACCI, dlFIBONACCI, DISTANCE, distance, usFIBONACCI, dsFIBONACCI, \
+    dDISTANCE
+
+
+def make_d_distance(min_val, max_val, counter):
+    if counter == 1:
+        return [min_val]
+    distance_list = distance(counter)
+    result = long_distribution(distance_list, min_val, max_val)
+    return result
 
 
 def make_distance(min_val, max_val, counter):
@@ -12,7 +21,7 @@ def make_distance(min_val, max_val, counter):
 def make_d_long_fibonacci(min_val, max_val, counter):
     fibonacci_list = u_fibonacci(counter)
     fibonacci_list.reverse()
-    result = long_distribution(fibonacci_list, min_val, max_val)
+    result = short_distribution(fibonacci_list, min_val, max_val)
     return result
 
 
@@ -39,7 +48,7 @@ def long_distribution(list_p, min_val, max_val):
 def make_d_short_fibonacci(min_val, max_val, counter):
     fibonacci_list = u_fibonacci(counter)
     fibonacci_list.reverse()
-    result = short_distribution(fibonacci_list, min_val, max_val)
+    result = long_distribution(fibonacci_list, min_val, max_val)
     return result
 
 
@@ -79,7 +88,8 @@ def u_fibonacci(n):
 n_math_dict = {
     ulFIBONACCI: make_u_long_fibonacci,
     dlFIBONACCI: make_d_long_fibonacci,
-    usFIBONACCI: make_u_long_fibonacci,
-    dsFIBONACCI: make_d_long_fibonacci,
+    usFIBONACCI: make_u_short_fibonacci,
+    dsFIBONACCI: make_d_short_fibonacci,
+    dDISTANCE: make_d_distance,
     DISTANCE: make_distance
 }

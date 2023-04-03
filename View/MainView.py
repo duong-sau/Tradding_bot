@@ -3,7 +3,7 @@ from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QDesktopWidget
 
 from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, ulFIBONACCI, dlFIBONACCI, \
-    usFIBONACCI, dsFIBONACCI, uaFIBONACCI
+    usFIBONACCI, dsFIBONACCI, uaFIBONACCI, dDISTANCE
 from Common.m_common import m_math_dict
 from Common.n_common import n_math_dict
 from View.addvance_view import AdvanceView
@@ -115,6 +115,7 @@ class MainWindow(QMainWindow):
         self.update_n_max()
 
     def pnl_cal(self):
+        long = self.tx_long.isChecked()
         M = self.m_textbox.get_value()
         ms = self.calculator_m()
         ns = self.calculator_n()
@@ -126,14 +127,15 @@ class MainWindow(QMainWindow):
         try:
 
             E = sum(x * y for x, y in zip(ms, ns)) / sum(ms)
-
-            long = E - (E / X)
-            short = E + (E / X)
+            if long:
+                L = E - (M / X)
+            else:
+                L = E + (M / X)
             rx = (M * 0.1) / abs(SL - E)
-            sl = M * abs(SL - E) * X / E
-            tp1 = M * a * abs(TP1 - E) * X / E
-            tp2 = M * (1 - a) * abs(TP2 - E) * X / E
-            self.pnl_view.set_text(long, short, rx, sl, tp1, tp2)
+            sl = abs(SL - E) * 100 / E
+            tp1 = abs(TP1 - E) * 100 / E
+            tp2 = abs(TP2 - E) * 100 / E
+            self.pnl_view.set_text(L, rx, sl, tp1, tp2)
         except:
             pass
 
@@ -155,7 +157,7 @@ class MainWindow(QMainWindow):
 
     def calculator_m(self):
         m_probability = self.get_m_probability()
-        m = self.m_textbox.get_value()
+        m = self.m_textbox.get_value() * self.margin_textbox.get_value()
         n = self.n_textbox.get_value()
         mc = self.m_allocator.get_value()
         if mc:
@@ -183,9 +185,9 @@ class MainWindow(QMainWindow):
         if long:
 
             if probability == MCN:
-                m_probability = DISTANCE
+                m_probability = dDISTANCE
             elif probability == MCNT:
-                m_probability = ulFIBONACCI
+                m_probability = dlFIBONACCI
             elif probability == MNT:
                 m_probability = dlFIBONACCI
             else:
@@ -195,7 +197,7 @@ class MainWindow(QMainWindow):
             if probability == MCN:
                 m_probability = DISTANCE
             elif probability == MCNT:
-                m_probability = usFIBONACCI
+                m_probability = dsFIBONACCI
             elif probability == MNT:
                 m_probability = dsFIBONACCI
             else:
@@ -246,18 +248,18 @@ class MainWindow(QMainWindow):
 
     def test(self):
         try:
-            self.m_textbox.textbox.setText("8000")
-            self.n_textbox.textbox.setText('5')
+            self.m_textbox.textbox.setText("10000")
+            self.n_textbox.textbox.setText('12')
             current_price = float(self.price_label.text())
-            self.min_textbox.textbox.setText(str(current_price - 100))
-            # self.min_textbox.textbox.setText(str(1800))
+            # self.min_textbox.textbox.setText(str(current_price - 100))
+            self.min_textbox.textbox.setText(str(29000))
 
-            self.max_textbox.textbox.setText(str(current_price + 100))
-            # self.max_textbox.textbox.setText(str(2300))
-            self.a.textbox.setText('25')
-            self.stop_loss_textbox.textbox.setText(str(current_price - 200))
-            self.take_profit1_textbox.textbox.setText(str(current_price + 200))
-            self.take_profit2_textbox.textbox.setText(str(current_price + 300))
-            self.margin_textbox.textbox.setText('5')
+            # self.max_textbox.textbox.setText(str(current_price + 100))
+            self.max_textbox.textbox.setText(str(30000))
+            self.a.textbox.setText('50')
+            self.stop_loss_textbox.textbox.setText(str(30200))
+            self.take_profit1_textbox.textbox.setText(str(28700))
+            self.take_profit2_textbox.textbox.setText(str(28500))
+            self.margin_textbox.textbox.setText('30')
         except:
             pass

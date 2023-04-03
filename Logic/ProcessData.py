@@ -57,7 +57,7 @@ def process(data):
         margin = data['margin']
 
         price = round_step_size(orders[i], 0.1)
-        quantity = round(budgets[i] * margin / price, 3)
+        quantity = round(budgets[i] / price, 3)
         if quantity < 0.001:
             msg_box("Lỗi", "Trong budget có giá trị bằng 0")
             return False, []

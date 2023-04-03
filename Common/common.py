@@ -2,8 +2,8 @@ ulFIBONACCI = "ulFibonacci"
 dlFIBONACCI = "dlFibonacci"
 usFIBONACCI = "usFibonacci"
 dsFIBONACCI = "dsFibonacci"
+dDISTANCE = 'dDistance'
 DISTANCE = 'Distance'
-
 
 uaFIBONACCI = "uaFibonacci"
 daFIBONACCI = "daFibonacci"
@@ -15,6 +15,7 @@ MCNT = "M+ N-"
 MNT = "M N-"
 
 probability_list = [MCN, MCNT, MNT]
+
 
 
 def distance(n):
