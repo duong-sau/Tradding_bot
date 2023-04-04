@@ -55,7 +55,7 @@ class CBinanceThread(QThread):
         symbol_names = ['BTCUSDT', 'BTCBUSD']
         for symbol in symbols:
             symbol_name = symbol['symbol']
-            if symbol in symbols:
+            if symbol_name in symbols:
                 continue
             symbol_names.append(symbol_name)
         self.set_symbols_signal.emit(symbol_names)
@@ -76,6 +76,11 @@ class CBinanceThread(QThread):
     def remove_position(self, position):
         self.pnl = self.pnl + position.pnl
         self.position_list.remove(position)
+        del position
+
+    def cancel_all(self):
+        for pos in self.position_list:
+            pos.cancel_all()
 
     @QtCore.pyqtSlot(dict)
     def handle_socket_event(self, msg):
@@ -110,7 +115,11 @@ class CBinanceThread(QThread):
         for data in datas:
             symbol, quantity, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data
             parameter = get_limit_from_parameter(symbol, quantity, price, margin, side)
-            position = OTOListener(self.client, self.remove_position, parameter, stop_loss, take_profit_1, a,
+            position = OTOListener(self.client,
+                                   self.remove_position, self.cancel_all,
+                                   parameter,
+                                   stop_loss,
+                                   take_profit_1, a,
                                    take_profit_2, b)
             self.position_list.append(position)
             position.make_limit_order()

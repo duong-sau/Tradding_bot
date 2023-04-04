@@ -11,11 +11,12 @@ FILL = 'FILLED'
 
 
 class OTOListener:
-    def __init__(self, client, destroy_call_back, parameter, stop_loss, take_profit, a_quantity, take_profit_2,
-                 b_quantity) -> None:
+    def __init__(self, client, destroy_call_back, cancel_call_back, parameter,
+                 stop_loss, take_profit, a_quantity, take_profit_2, b_quantity) -> None:
 
         self.limit_order = None
         self.destroy_call_back = destroy_call_back
+        self.cancel_all_call_back = cancel_call_back
 
         self.m = parameter['quantity']
         self.e = parameter['price']
@@ -89,6 +90,7 @@ class OTOListener:
         self.update_pnl(self.take_profit_2, self.b_quantity)
         log_fill(limit_order_id=self.limit_order['clientOrderId'], order_id=list(self.action_dict.keys())[4],
                  profit=self.pnl, symbol=self.parameter['symbol'])
+        self.cancel_all_call_back()
         self.destroy()
 
     def handle_stop_loss_1(self, ap):
@@ -105,6 +107,7 @@ class OTOListener:
         self.update_pnl(self.stop_loss, self.b_quantity)
         log_fill(limit_order_id=self.limit_order['clientOrderId'], order_id=list(self.action_dict.keys())[2],
                  profit=self.pnl, symbol=self.parameter['symbol'])
+        self.cancel_all_call_back()
         self.destroy()
 
     def fill_handle(self, event):
@@ -177,14 +180,21 @@ class OTOListener:
     # ----------------------------------------------------------------------------------------------------
     # Cancel Order
     # ----------------------------------------------------------------------------------------------------
+    def cancel_limit_order(self):
+        order_id = list(self.action_dict.keys())[0]
+        if order_id == 'limit':
+            return
+        self.client.futures_cancel_order(
+            symbol=self.s,
+            order_id=order_id
+        )
+        log_cancel(limit_order_id=self.limit_order['clientOrderId'], order_id=order_id,
+                   symbol=self.limit_order['symbol'])
+
     def cancel_stop_loss_1_order(self):
         order_id = list(self.action_dict.keys())[1]
         if order_id == 'stop2':
             return
-        param = {
-            'symbol': self.s,
-            'orderId': order_id
-        }
         self.client.futures_cancel_order(
             symbol=self.s,
             order_id=order_id
@@ -258,3 +268,7 @@ class OTOListener:
         else:
             pnl = 0
         return pnl
+
+    def cancel_all(self):
+        if self.state == "OPEN":
+            self.cancel_limit_order()
