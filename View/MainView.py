@@ -246,20 +246,38 @@ class MainWindow(QMainWindow):
     def update_pnl(self, pnl, sum_pnl):
         self.pnl_view.update_pnl(pnl, sum_pnl)
 
+    # def test(self):
+    #     try:
+    #         self.m_textbox.textbox.setText("10000")
+    #         self.n_textbox.textbox.setText('5')
+    #         current_price = float(self.price_label.text())
+    #         self.min_textbox.textbox.setText(str(current_price - 100))
+    #         # self.min_textbox.textbox.setText(str(29000))
+    #
+    #         self.max_textbox.textbox.setText(str(current_price + 100))
+    #         # self.max_textbox.textbox.setText(str(30000))
+    #         self.a.textbox.setText('50')
+    #         self.stop_loss_textbox.textbox.setText(str(current_price - 200))
+    #         self.take_profit1_textbox.textbox.setText(str(current_price + 200))
+    #         self.take_profit2_textbox.textbox.setText(str(current_price + 300))
+    #         self.margin_textbox.textbox.setText('30')
+    #     except:
+    #         pass
+
     def test(self):
         try:
             self.m_textbox.textbox.setText("10000")
-            self.n_textbox.textbox.setText('12')
+            self.n_textbox.textbox.setText('20')
             current_price = float(self.price_label.text())
-            self.min_textbox.textbox.setText(str(current_price - 100))
+            self.min_textbox.textbox.setText(str(current_price - 40))
             # self.min_textbox.textbox.setText(str(29000))
 
-            self.max_textbox.textbox.setText(str(current_price + 100))
+            self.max_textbox.textbox.setText(str(current_price + 40))
             # self.max_textbox.textbox.setText(str(30000))
-            self.a.textbox.setText('50')
-            self.stop_loss_textbox.textbox.setText(str(30200))
-            self.take_profit1_textbox.textbox.setText(str(28700))
-            self.take_profit2_textbox.textbox.setText(str(28500))
-            self.margin_textbox.textbox.setText('30')
+            self.a.textbox.setText('40')
+            self.stop_loss_textbox.textbox.setText(str(current_price + 60))
+            self.take_profit1_textbox.textbox.setText(str(current_price - 60))
+            self.take_profit2_textbox.textbox.setText(str(current_price - 80))
+            self.margin_textbox.textbox.setText('50')
         except:
             pass

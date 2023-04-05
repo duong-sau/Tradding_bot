@@ -29,6 +29,7 @@ class CBinanceThread(QThread):
         self.client = Client(api_key, api_secret, testnet=True)
 
     def retry(self):
+        time.sleep(5)
         self.client = Client(api_key, api_secret, testnet=True)
         self.run()
 

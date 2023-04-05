@@ -57,7 +57,7 @@ class OTOListener:
             self.state = "OPEN"
             limit_order = open_order(self.client, self.parameter, self.parameter['newClientOrderId'])
             self.limit_order = limit_order
-            limit_id = limit_order['clientOrderId']
+            limit_id = limit_order['orderId']
             self.replace_key(limit_id, 'limit')
 
         except(BinanceRequestException, BinanceAPIException):
@@ -70,10 +70,10 @@ class OTOListener:
         self.state = "V1"
         self.e = float(ap)
         self.make_stop_loss_1_order()
-        self.make_stop_loss_2_order()
+        self.make_take_profit_1_order()
 
         if self.b_quantity != 0:
-            self.make_take_profit_1_order()
+            self.make_stop_loss_2_order()
             self.make_take_profit_2_order()
 
     def handle_take_profit_1(self, ap):
@@ -111,7 +111,7 @@ class OTOListener:
         self.destroy()
 
     def fill_handle(self, event):
-        client_id = event['c']
+        client_id = event['i']
         if client_id in self.action_dict.keys():
             self.action_dict[client_id](ap=event['ap'])
         else:
@@ -119,7 +119,7 @@ class OTOListener:
 
     def handle(self, event):
         try:
-            if event['c'] not in self.action_dict.keys():
+            if event['i'] not in self.action_dict.keys():
                 return
             if event['X'] == CANCELED:
                 self.destroy()
@@ -141,7 +141,7 @@ class OTOListener:
         try:
             parameter = get_stop_loss_form_limit(self.limit_order, self.stop_loss, self.a_quantity)
             order = open_order(self.client, parameter, self.limit_order['clientOrderId'])
-            limit_id = order['clientOrderId']
+            limit_id = order['orderId']
             self.replace_key(limit_id, 'stop1')
         except:
             log_fail(self.limit_order['clientOrderId'], str(sys.exc_info()[1]))
@@ -149,9 +149,11 @@ class OTOListener:
 
     def make_stop_loss_2_order(self):
         try:
+            if self.b_quantity < 0.01:
+                return
             parameter = get_stop_loss_form_limit(self.limit_order, self.stop_loss, self.b_quantity)
             order = open_order(self.client, parameter, self.limit_order['clientOrderId'])
-            limit_id = order['clientOrderId']
+            limit_id = order['orderId']
             self.replace_key(limit_id, 'stop2')
         except:
             log_fail(self.limit_order['clientOrderId'], str(sys.exc_info()[1]))
@@ -161,7 +163,7 @@ class OTOListener:
         try:
             parameter = get_take_profit_form_limit(self.limit_order, self.take_profit_1, self.a_quantity)
             order = open_order(self.client, parameter, self.limit_order['clientOrderId'])
-            limit_id = order['clientOrderId']
+            limit_id = order['orderId']
             self.replace_key(limit_id, 'take1')
         except:
             log_fail(self.limit_order['clientOrderId'], str(sys.exc_info()[1]))
@@ -169,9 +171,11 @@ class OTOListener:
 
     def make_take_profit_2_order(self):
         try:
+            if self.b_quantity < 0.001:
+                return
             parameter = get_take_profit_form_limit(self.limit_order, self.take_profit_2, self.b_quantity)
             order = open_order(self.client, parameter, self.limit_order['clientOrderId'])
-            limit_id = order['clientOrderId']
+            limit_id = order['orderId']
             self.replace_key(limit_id, 'take2')
         except:
             log_fail(self.limit_order['clientOrderId'], str(sys.exc_info()[1]))
@@ -186,18 +190,18 @@ class OTOListener:
             return
         self.client.futures_cancel_order(
             symbol=self.s,
-            order_id=order_id
+            origClientOrderId=order_id
         )
         log_cancel(limit_order_id=self.limit_order['clientOrderId'], order_id=order_id,
                    symbol=self.limit_order['symbol'])
 
     def cancel_stop_loss_1_order(self):
         order_id = list(self.action_dict.keys())[1]
-        if order_id == 'stop2':
+        if order_id == 'stop1':
             return
         self.client.futures_cancel_order(
             symbol=self.s,
-            order_id=order_id
+            OrderId=order_id
         )
         log_cancel(limit_order_id=self.limit_order['clientOrderId'], order_id=order_id,
                    symbol=self.limit_order['symbol'])
@@ -208,7 +212,7 @@ class OTOListener:
             return
         self.client.futures_cancel_order(
             symbol=self.s,
-            order_id=order_id
+            OrderId=order_id
         )
         log_cancel(limit_order_id=self.limit_order['clientOrderId'], order_id=order_id,
                    symbol=self.limit_order['symbol'])
@@ -219,7 +223,7 @@ class OTOListener:
             return
         self.client.futures_cancel_order(
             symbol=self.s,
-            order_id=order_id
+            OrderId=order_id
         )
         log_cancel(limit_order_id=self.limit_order['clientOrderId'], order_id=order_id,
                    symbol=self.limit_order['symbol'])
@@ -231,7 +235,7 @@ class OTOListener:
             return
         self.client.futures_cancel_order(
             symbol=self.s,
-            order_id=order_id
+            OrderId=order_id
         )
         log_cancel(limit_order_id=self.limit_order['clientOrderId'], order_id=order_id,
                    symbol=self.limit_order['symbol'])

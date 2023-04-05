@@ -1,3 +1,5 @@
+import time
+
 from PyQt5.QtCore import QThread, pyqtSignal
 from binance import ThreadedWebsocketManager
 from binance.exceptions import BinanceAPIException, BinanceRequestException
@@ -34,4 +36,5 @@ class CSocketThread(QThread):
         try:
             self.socket.join()
         except:
+            time.sleep(5)
             self.run()
