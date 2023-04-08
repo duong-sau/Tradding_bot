@@ -1,0 +1,1 @@
+pyinstaller --onefile --noconsole Main.py --distpath=./ --workpath=../build --specpath=../build
