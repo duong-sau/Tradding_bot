@@ -21,12 +21,14 @@ def log_order(limit_order_id, order_id, action, symbol, price, quantity, margin,
 
 
 def log_fill(limit_order_id, order_id, symbol, profit):
-    new_row_values = [limit_order_id, order_id, "", symbol, "", "", "", profit]
+    action = inspect.getouterframes(inspect.currentframe())[1][3]
+    new_row_values = [limit_order_id, order_id, "FILL", symbol, action, "", "", profit]
     put_log(new_row_values)
 
 
 def log_cancel(limit_order_id, order_id, symbol, ):
-    new_row_values = [limit_order_id, order_id, "", symbol, "", "", "", ""]
+    action = inspect.getouterframes(inspect.currentframe())[1][3]
+    new_row_values = [limit_order_id, order_id, "CANCEL", symbol, action, "", "", ""]
     put_log(new_row_values)
 
 
@@ -37,8 +39,14 @@ def log_fail(limit_id, content):
 
 
 def put_log(row):
-    t = threading.Thread(target=log_wrap, args=(row,))
-    t.start()
+    file = open(rf'.\log\{row[0]}.txt', mode='a')
+    for dat in row:
+        file.write(str(dat))
+        file.write(', ')
+    file.write('\n')
+    file.close()
+    # t = threading.Thread(target=log_wrap, args=(row,))
+    # t.start()
 
 
 def log_wrap(row):

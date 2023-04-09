@@ -8,7 +8,7 @@ from Logic.ProcessData import process
 
 class CLogicThread(QThread):
     open_order_signal = pyqtSignal(list)
-    update_price_signal = pyqtSignal(str)
+    update_price_signal = pyqtSignal(str, str)
 
     def __init__(self, parent=None):
         super(CLogicThread, self).__init__(parent)
@@ -28,6 +28,6 @@ class CLogicThread(QThread):
             return
         self.open_order_signal.emit(data)
 
-    @QtCore.pyqtSlot(str)
-    def update_price(self, price):
-        self.update_price_signal.emit(price)
+    @QtCore.pyqtSlot(str, str)
+    def update_price(self, mark, current):
+        self.update_price_signal.emit(mark, current)

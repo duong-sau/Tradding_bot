@@ -122,8 +122,9 @@ class OTOListener:
             if event['i'] not in self.action_dict.keys():
                 return
             if event['X'] == CANCELED:
-                self.destroy()
-                log_fail(self.limit_order['clientOrderId'], 'Order be cancel')
+                if event['i'] == list(self.action_dict.keys())[0]:
+                    self.destroy()
+                    log_fail(self.limit_order['clientOrderId'], 'Order be cancel')
             elif event['X'] == FILL:
                 self.fill_handle(event)
         except (BinanceAPIException, BinanceRequestException):
@@ -149,7 +150,7 @@ class OTOListener:
 
     def make_stop_loss_2_order(self):
         try:
-            if self.b_quantity < 0.01:
+            if self.b_quantity < 0.001:
                 return
             parameter = get_stop_loss_form_limit(self.limit_order, self.stop_loss, self.b_quantity)
             order = open_order(self.client, parameter, self.limit_order['clientOrderId'])
@@ -185,12 +186,15 @@ class OTOListener:
     # Cancel Order
     # ----------------------------------------------------------------------------------------------------
     def cancel_limit_order(self):
+        if self.state == "CLOSE":
+            return
+        self.state = "CLOSE"
         order_id = list(self.action_dict.keys())[0]
         if order_id == 'limit':
             return
         self.client.futures_cancel_order(
             symbol=self.s,
-            origClientOrderId=order_id
+            OrderId=order_id
         )
         log_cancel(limit_order_id=self.limit_order['clientOrderId'], order_id=order_id,
                    symbol=self.limit_order['symbol'])
@@ -266,13 +270,14 @@ class OTOListener:
         if self.state == "OPEN":
             pnl = 0
         elif self.state == "V1":
-            pnl = m * (price - self.e) * self.margin
+            pnl = m * (price - self.e)
         elif self.state == "V2":
-            pnl = self.pnl + b_quantity * (price - self.e) * self.margin
+            pnl = self.pnl + b_quantity * (price - self.e)
         else:
             pnl = 0
         return pnl
 
     def cancel_all(self):
         if self.state == "OPEN":
+            log_fail(self.limit_order['clientOrderId'], 'CANCEL ALL')
             self.cancel_limit_order()

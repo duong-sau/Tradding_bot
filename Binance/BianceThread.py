@@ -15,7 +15,7 @@ from View.a_common.MsgBox import msg_box
 
 
 class CBinanceThread(QThread):
-    update_price_signal = pyqtSignal(str)
+    update_price_signal = pyqtSignal(str, str)
     update_pnl_signal = pyqtSignal(float, float)
     set_symbols_signal = pyqtSignal(list)
 
@@ -63,15 +63,15 @@ class CBinanceThread(QThread):
 
     def update_price(self):
         ticker = self.client.futures_mark_price(symbol=self.symbol)
-        price = ticker['markPrice']
+        mark_price = ticker['markPrice']
         last_ticker = self.client.futures_symbol_ticker(symbol=self.symbol)
         self.current_price = float(last_ticker['price'])
-        self.update_price_signal.emit(price)
+        self.update_price_signal.emit(mark_price, last_ticker['price'])
 
     def update_pnl(self):
         pnl = 0
         for pos in self.position_list:
-            pnl = pos.get_pnl(self.current_price)
+            pnl = pos.get_pnl(self.current_price) + pnl
         self.update_pnl_signal.emit(round(pnl, 3), round(self.pnl, 3))
 
     def remove_position(self, position):

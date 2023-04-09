@@ -27,9 +27,7 @@ class MainWindow(QMainWindow):
 
         self.input_view = InputView()
         self.m_textbox = self.input_view.m_textbox
-        self.m_allocator = self.input_view.m_allocator
         self.n_textbox = self.input_view.n_textbox
-        self.n_allocator = self.input_view.n_allocator
         self.min_textbox = self.input_view.min_textbox
         self.max_textbox = self.input_view.max_textbox
 
@@ -56,7 +54,8 @@ class MainWindow(QMainWindow):
         self.pnl_view = PNLView(self.test)
 
         self.symbol_view = SymbolView()
-        self.price_label = self.symbol_view.price_label
+        self.mark_price_label = self.symbol_view.mark_label
+        self.current_price_label = self.symbol_view.current_label
         self.symbol_select = self.symbol_view.symbol_select
 
         self.create_view()
@@ -98,9 +97,10 @@ class MainWindow(QMainWindow):
         data = self.get_value(), 'SELL'
         self.open_order_signal.emit(data)
 
-    @QtCore.pyqtSlot(str)
-    def update_price(self, price):
-        self.price_label.setText(price)
+    @QtCore.pyqtSlot(str, str)
+    def update_price(self, mark, current):
+        self.mark_price_label.setText(mark)
+        self.current_price_label.setText(current)
 
     @QtCore.pyqtSlot(list)
     def set_symbols(self, symbol_names):
@@ -159,24 +159,15 @@ class MainWindow(QMainWindow):
         m_probability = self.get_m_probability()
         m = self.m_textbox.get_value() * self.margin_textbox.get_value()
         n = self.n_textbox.get_value()
-        mc = self.m_allocator.get_value()
-        if mc:
-            m_list = mc + m_math_dict[m_probability](mc[-1], m, n - len(mc) + 1)[1:]
-        else:
-            m_list = m_math_dict[m_probability](0, m, n)
+        m_list = m_math_dict[m_probability](0, m, n)
         return m_list
 
     def calculator_n(self):
         n = self.n_textbox.get_value()
-        nc = self.n_allocator.get_value()
         min_val = self.min_textbox.get_value()
         max_val = self.max_textbox.get_value()
         n_probability = self.get_n_probability()
-
-        if nc:
-            n_list = nc + n_math_dict[n_probability](nc[-1], max_val, n - len(nc) + 1)[1:]
-        else:
-            n_list = n_math_dict[n_probability](min_val, max_val, n)
+        n_list = n_math_dict[n_probability](min_val, max_val, n)
         return n_list
 
     def get_n_probability(self):
@@ -266,18 +257,18 @@ class MainWindow(QMainWindow):
 
     def test(self):
         try:
-            self.m_textbox.textbox.setText("10000")
-            self.n_textbox.textbox.setText('20')
-            current_price = float(self.price_label.text())
-            self.min_textbox.textbox.setText(str(current_price - 40))
+            self.m_textbox.textbox.setText("1000")
+            self.n_textbox.textbox.setText('5')
+            current_price = float(self.current_price_label.text())
+            self.min_textbox.textbox.setText(str(current_price - 100))
             # self.min_textbox.textbox.setText(str(29000))
 
-            self.max_textbox.textbox.setText(str(current_price + 40))
+            self.max_textbox.textbox.setText(str(current_price + 100))
             # self.max_textbox.textbox.setText(str(30000))
             self.a.textbox.setText('40')
-            self.stop_loss_textbox.textbox.setText(str(current_price + 60))
-            self.take_profit1_textbox.textbox.setText(str(current_price - 60))
-            self.take_profit2_textbox.textbox.setText(str(current_price - 80))
-            self.margin_textbox.textbox.setText('50')
+            self.stop_loss_textbox.textbox.setText(str(current_price - 120))
+            self.take_profit1_textbox.textbox.setText(str(current_price + 120))
+            self.take_profit2_textbox.textbox.setText(str(current_price + 180))
+            self.margin_textbox.textbox.setText('1')
         except:
             pass
