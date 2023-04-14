@@ -3,7 +3,7 @@ import time
 from PyQt5 import QtCore
 from PyQt5.QtCore import QThread, pyqtSignal
 
-from Logic.ProcessData import process
+from Logic.LogicFunction import process
 
 
 class CLogicThread(QThread):
