@@ -1,7 +1,6 @@
-import datetime
 import sys
 import traceback
-from socket import gethostname
+
 from PyQt5.QtWidgets import QApplication
 from qt_material import apply_stylesheet
 
