@@ -182,7 +182,7 @@ class MainWindow(QMainWindow):
             for m_val, n_val in zip(m_list, n_list):
 
                 if round(margin * m_val / n_val, 3) < 0.001:
-                    return n - 1
+                    return n - 2
 
     # def test(self):
     #     try:
