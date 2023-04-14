@@ -1,6 +1,7 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QDesktopWidget
+from View.addvance_view import AdvanceView
 
 from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, dlFIBONACCI, \
     dsFIBONACCI, uaFIBONACCI, dDISTANCE
@@ -35,9 +36,21 @@ class MainWindow(QMainWindow):
 
         self.margin_textbox = self.combobox_view.margin_input
 
+        self.advance_view = AdvanceView()
+        self.stop_loss_textbox = self.advance_view.stop_loss_textbox
+        self.stop_loss_percent = self.advance_view.stop_loss_percent
+        self.take_profit1_textbox = self.advance_view.take_profit1_textbox
+        self.a = self.advance_view.a
+        self.take_profit1_percent = self.advance_view.take_profit1_percent
+        self.take_profit2_textbox = self.advance_view.take_profit2_textbox
+        self.b = self.advance_view.b
+        self.take_profit2_percent = self.advance_view.take_profit2_percent
+
         self.control_view = ControlView()
         self.long_button = self.control_view.long_button
         self.short_button = self.control_view.short_button
+
+        self.pnl_view = PNLView(self.test)
 
         self.symbol_view = SymbolView()
         self.mark_price_label = self.symbol_view.mark_label
@@ -57,7 +70,9 @@ class MainWindow(QMainWindow):
     def create_layout(self):
         layout = QGridLayout()
         layout.addWidget(self.input_view, 0, 0, 4, 4)
+        layout.addWidget(self.advance_view, 5, 0, 3, 4)
         layout.addWidget(self.combobox_view, 0, 4, 4, 2)
+        layout.addWidget(self.pnl_view, 5, 4, 3, 2)
         layout.addWidget(self.control_view, 8, 0, 1, 4)
         layout.addWidget(self.symbol_view, 8, 4, 1, 2)
 
@@ -110,6 +125,13 @@ class MainWindow(QMainWindow):
         data = {
             'm_list': self.calculator_m(),
             'n_list': self.calculator_n(),
+            'min': self.min_textbox.get_value(),
+            'max': self.max_textbox.get_value(),
+            'sl': self.stop_loss_textbox.get_value(),
+            'tp1': self.take_profit1_textbox.get_value(),
+            'a': self.a.get_value() / 100,
+            'tp2': self.take_profit2_textbox.get_value(),
+            'b': self.b.get_value() / 100,
             'symbol': self.symbol_select.currentText(),
             'margin': self.margin_textbox.get_value()
         }
@@ -192,3 +214,47 @@ class MainWindow(QMainWindow):
 
                 if round(margin * m_val / n_val, 3) < 0.001:
                     return n - 2
+
+    # def test(self):
+    #     try:
+    #         self.m_textbox.textbox.setText("10000")
+    #         self.n_textbox.textbox.setText('5')
+    #         current_price = float(self.price_label.text())
+    #         self.min_textbox.textbox.setText(str(current_price - 100))
+    #         # self.min_textbox.textbox.setText(str(29000))
+    #
+    #         self.max_textbox.textbox.setText(str(current_price + 100))
+    #         # self.max_textbox.textbox.setText(str(30000))
+    #         self.a.textbox.setText('50')
+    #         self.stop_loss_textbox.textbox.setText(str(current_price - 200))
+    #         self.take_profit1_textbox.textbox.setText(str(current_price + 200))
+    #         self.take_profit2_textbox.textbox.setText(str(current_price + 300))
+    #         self.margin_textbox.textbox.setText('30')
+    #     except:
+    #         pass
+
+    def test(self):
+        try:
+            self.m_textbox.textbox.setText("1000")
+            self.n_textbox.textbox.setText('1')
+            current_price = float(self.current_price_label.text())
+            self.min_textbox.textbox.setText(str(current_price + 20))
+            # self.min_textbox.textbox.setText(str(29000))
+
+            self.max_textbox.textbox.setText(str(current_price + 100))
+            # self.max_textbox.textbox.setText(str(30000))
+            self.a.textbox.setText('40')
+            long = self.tx_long.isChecked()
+            if long:
+                self.stop_loss_textbox.textbox.setText(str(current_price - 60))
+                self.take_profit1_textbox.textbox.setText(str(current_price + 60))
+                self.take_profit2_textbox.textbox.setText(str(current_price + 80))
+            else:
+                self.stop_loss_textbox.textbox.setText(str(current_price + 60))
+                self.take_profit1_textbox.textbox.setText(str(current_price - 60))
+                self.take_profit2_textbox.textbox.setText(str(current_price - 80))
+            self.margin_textbox.textbox.setText('5')
+
+            self.long_button.click()
+        except:
+            pass

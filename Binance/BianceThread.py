@@ -10,6 +10,7 @@ from binance.exceptions import BinanceRequestException, BinanceAPIException
 
 from Binance import api_key, api_secret, testnet
 from Binance.Common import get_limit_from_parameter
+from Binance.OTOControl import OTOControl
 from View.a_common.MsgBox import msg_box
 
 
@@ -41,6 +42,7 @@ class CBinanceThread(QThread):
             while self.running:
                 self.test_connection()
                 self.update_price()
+                self.update_pnl()
                 time.sleep(0.25)
         except:
             print('retry')
@@ -69,6 +71,27 @@ class CBinanceThread(QThread):
         last_ticker = self.client.futures_symbol_ticker(symbol=self.symbol)
         self.current_price = float(last_ticker['price'])
         self.update_price_signal.emit(mark_price, last_ticker['price'])
+
+    def update_pnl(self):
+        return
+        pnl = 0
+        for pos in self.position_list:
+            pnl = pos.get_pnl(self.current_price) + pnl
+        self.update_pnl_signal.emit(round(pnl, 3), round(self.pnl, 3))
+
+    def remove_position(self, position):
+        self.pnl = self.pnl + position.pnl
+        self.position_list.remove(position)
+        del position
+
+    def cancel_all(self):
+        for pos in self.position_list:
+            pos.cancel_all()
+
+    @QtCore.pyqtSlot(dict)
+    def handle_socket_event(self, msg):
+        for position in self.position_list:
+            position.handle(msg)
 
     @QtCore.pyqtSlot(str)
     def update_symbol(self, symbol):
@@ -112,3 +135,9 @@ class CBinanceThread(QThread):
             error = str(sys.exc_info()[1])
             error_string = error_string + error
             msg_box(error_string)
+            position = OTOControl(self.remove_position, self.cancel_all,
+                                  parameter,
+                                  stop_loss, take_profit_1, a,
+                                  stop_loss, take_profit_2, b)
+            self.position_list.append(position)
+        # msg_box("Đặt lệnh xong", "Thành công")
