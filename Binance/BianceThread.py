@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QMessageBox
 from binance.client import Client
 from binance.exceptions import BinanceRequestException, BinanceAPIException
 
-from Binance import api_key, api_secret
+from Binance import api_key, api_secret, testnet
 from Binance.Common import get_limit_from_parameter
 from View.a_common.MsgBox import msg_box
 
@@ -24,11 +24,11 @@ class CBinanceThread(QThread):
         self.pnl = 0
         self.current_price = 0
         self.symbol = 'BTCUSDT'
-        self.client = Client(api_key, api_secret, testnet=True)
+        self.client = Client(api_key, api_secret, testnet=testnet)
 
     def retry(self):
         time.sleep(5)
-        self.client = Client(api_key, api_secret, testnet=True)
+        self.client = Client(api_key, api_secret, testnet=testnet)
         self.run()
 
     def run(self):
