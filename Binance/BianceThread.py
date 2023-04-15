@@ -1,3 +1,4 @@
+import ctypes
 import sys
 import time
 
@@ -24,6 +25,10 @@ class CBinanceThread(QThread):
         self.pnl = 0
         self.current_price = 0
         self.symbol = 'BTCUSDT'
+        if testnet == 'error':
+            MessageBox = ctypes.windll.user32.MessageBoxW
+            MessageBox(None, 'Chưa cài đặt testnet', 'Lỗi', 0)
+            sys.exit(0)
         self.client = Client(api_key, api_secret, testnet=testnet)
 
     def retry(self):
