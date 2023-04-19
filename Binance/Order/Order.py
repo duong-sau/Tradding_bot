@@ -1,25 +1,23 @@
-from Binance import get_client
-
 
 class Order:
 
-    def __init__(self, parameter) -> None:
+    def __init__(self, client, parameter) -> None:
         super().__init__()
+        self.client = client
         self.id = ''
         self.client_id = parameter['newClientOrderId']
         self.parameter = parameter
 
     def place(self):
         try:
-            client = get_client()
+            client = self.client
             order = client.futures_create_order(**self.parameter)
             self.id = order['orderId']
         except:
-            # log_fail(self., str(sys.exc_info()[1]))
             raise
 
     def cancel(self):
-        client = get_client()
+        client = self.client
         client.futures_cancel_order(
             symbol=self.parameter['symbol'],
             OrderId=self.id

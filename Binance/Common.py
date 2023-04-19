@@ -18,7 +18,7 @@ def get_limit_from_parameter(symbol, quantity, price, margin, side):
     return order_param
 
 
-def get_stop_loss_form_limit(limit_order, stop_loss, quantity):
+def get_stop_loss_form_limit(limit_order, stop_loss):
     limit_side = limit_order['side']
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
     order_param = {
@@ -32,3 +32,7 @@ def get_stop_loss_form_limit(limit_order, stop_loss, quantity):
         'newOrderRespType': "ACK"
     }
     return order_param
+
+
+CANCELED = "CANCELED"
+FILLED = "FILLED"
