@@ -47,10 +47,14 @@ def process(data):
             msg_box("Trong budget có giá trị bằng 0", "Lỗi")
             return False, []
 
+        stop_loss = float(data['sl'])
+        stop_loss = round_step_size(stop_loss, 0.1)
+
         requests.append(
             (symbol,
              quantity,
              price,
+             stop_loss,
              margin,
              open_type))
     requests = sorted(requests, key=lambda x: x[2])

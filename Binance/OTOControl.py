@@ -46,6 +46,7 @@ class OTOControl:
 
     def fill_handle(self, event):
         self.OTOCO.handel(event)
+        self.destroy_call_back(self)
 
     def destroy_handel(self):
         self.destroy_call_back(self)

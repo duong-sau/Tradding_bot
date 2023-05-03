@@ -1,12 +1,12 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QDesktopWidget
-from View.addvance_view import AdvanceView
 
 from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, dlFIBONACCI, \
     dsFIBONACCI, uaFIBONACCI, dDISTANCE
 from Common.m_common import m_math_dict
 from Common.n_common import n_math_dict
+from View.addvance_view import AdvanceView
 from View.combobox_view import ComboboxView
 from View.control_view import ControlView
 from View.input_view import InputView
@@ -38,19 +38,14 @@ class MainWindow(QMainWindow):
 
         self.advance_view = AdvanceView()
         self.stop_loss_textbox = self.advance_view.stop_loss_textbox
-        self.stop_loss_percent = self.advance_view.stop_loss_percent
-        self.take_profit1_textbox = self.advance_view.take_profit1_textbox
-        self.a = self.advance_view.a
-        self.take_profit1_percent = self.advance_view.take_profit1_percent
-        self.take_profit2_textbox = self.advance_view.take_profit2_textbox
-        self.b = self.advance_view.b
-        self.take_profit2_percent = self.advance_view.take_profit2_percent
+        self.take_profit_textbox = self.advance_view.take_profit_textbox
+        self.is_stop_loss = self.advance_view.is_stop_loss
 
         self.control_view = ControlView()
         self.long_button = self.control_view.long_button
         self.short_button = self.control_view.short_button
 
-        self.pnl_view = PNLView(self.test)
+        # self.pnl_view = PNLView(self.test)
 
         self.symbol_view = SymbolView()
         self.mark_price_label = self.symbol_view.mark_label
@@ -64,7 +59,8 @@ class MainWindow(QMainWindow):
     def create_view(self):
         desktop = QDesktopWidget()
         screen_rect = desktop.screenGeometry()
-        self.setGeometry(0, 0, screen_rect.width(), screen_rect.height() - 50)
+        # self.setGeometry(0, 0, screen_rect.width(), screen_rect.height() - 50)
+        self.setGeometry(200, 200, 400, 600)
         self.setWindowTitle('Trading Bot')
 
     def create_layout(self):
@@ -72,7 +68,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.input_view, 0, 0, 4, 4)
         layout.addWidget(self.advance_view, 5, 0, 3, 4)
         layout.addWidget(self.combobox_view, 0, 4, 4, 2)
-        layout.addWidget(self.pnl_view, 5, 4, 3, 2)
+        # layout.addWidget(self.pnl_view, 5, 4, 3, 2)
         layout.addWidget(self.control_view, 8, 0, 1, 4)
         layout.addWidget(self.symbol_view, 8, 4, 1, 2)
 
@@ -125,13 +121,7 @@ class MainWindow(QMainWindow):
         data = {
             'm_list': self.calculator_m(),
             'n_list': self.calculator_n(),
-            'min': self.min_textbox.get_value(),
-            'max': self.max_textbox.get_value(),
             'sl': self.stop_loss_textbox.get_value(),
-            'tp1': self.take_profit1_textbox.get_value(),
-            'a': self.a.get_value() / 100,
-            'tp2': self.take_profit2_textbox.get_value(),
-            'b': self.b.get_value() / 100,
             'symbol': self.symbol_select.currentText(),
             'margin': self.margin_textbox.get_value()
         }
@@ -247,11 +237,11 @@ class MainWindow(QMainWindow):
             long = self.tx_long.isChecked()
             if long:
                 self.stop_loss_textbox.textbox.setText(str(current_price - 60))
-                self.take_profit1_textbox.textbox.setText(str(current_price + 60))
+                self.take_profit_textbox.textbox.setText(str(current_price + 60))
                 self.take_profit2_textbox.textbox.setText(str(current_price + 80))
             else:
                 self.stop_loss_textbox.textbox.setText(str(current_price + 60))
-                self.take_profit1_textbox.textbox.setText(str(current_price - 60))
+                self.take_profit_textbox.textbox.setText(str(current_price - 60))
                 self.take_profit2_textbox.textbox.setText(str(current_price - 80))
             self.margin_textbox.textbox.setText('5')
 

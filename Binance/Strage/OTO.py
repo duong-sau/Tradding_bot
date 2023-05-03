@@ -45,7 +45,6 @@ class OTO:
         pass
 
     def fill_handle(self, event):
-
         if event['i'] in self.limit_order.get_order_id():
             self.make_stop_loss()
 

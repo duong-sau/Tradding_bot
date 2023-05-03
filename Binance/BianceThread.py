@@ -16,7 +16,6 @@ from View.a_common.MsgBox import msg_box
 
 class CBinanceThread(QThread):
     update_price_signal = pyqtSignal(str, str)
-    update_pnl_signal = pyqtSignal(float, float)
     set_symbols_signal = pyqtSignal(list)
 
     def __init__(self):
@@ -26,7 +25,7 @@ class CBinanceThread(QThread):
         self.pnl = 0
         self.current_price = 0
         self.symbol = 'BTCUSDT'
-        if testnet == 'error':
+        if testnet == 'testnet':
             MessageBox = ctypes.windll.user32.MessageBoxW
             MessageBox(None, 'Chưa cài đặt testnet', 'Lỗi', 0)
             sys.exit(0)
@@ -70,11 +69,10 @@ class CBinanceThread(QThread):
         last_ticker = self.client.futures_symbol_ticker(symbol=self.symbol)
         self.current_price = float(last_ticker['price'])
         self.update_price_signal.emit(mark_price, last_ticker['price'])
+
     def remove_position(self, position):
-        self.pnl = self.pnl + position.pnl
         self.position_list.remove(position)
         del position
-
 
     @QtCore.pyqtSlot(dict)
     def handle_socket_event(self, msg):
@@ -87,42 +85,51 @@ class CBinanceThread(QThread):
 
     @QtCore.pyqtSlot(list)
     def open_order(self, datas):
+        if not self.confirm(datas):
+            return
+        self.change_margin(datas)
+        self.make_position(datas)
+        msg_box("Đặt lệnh xong", "Thành công")
+
+    def confirm(self, datas):
         confirm_str = ""
         for data in datas:
-            symbol, quantity, price, margin, side = data
+            symbol, quantity, price, stop_loss, margin, side = data
             confirm_str = confirm_str + f'Giá: {price}    |||| số lượng {quantity}\n'
-
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
         msg.setWindowTitle("Xác nhận đặt lệnh")
         msg.setText(confirm_str)
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         if msg.exec() != QMessageBox.Ok:
-            return
-        symbol, quantity, price, margin, side = datas[0]
-        self.change_margin(margin)
-        for data in datas:
-            symbol, quantity, price, margin, side = data
-            self.create_limit_order(symbol, quantity, price, margin, side)
-        msg_box("Đặt lệnh xong", "Thành công")
+            return False
+        else:
+            return True
 
-    def change_margin(self, margin):
+    def change_margin(self, datas):
         try:
+            symbol, quantity, price, stop_loss, margin, side = datas[0]
             self.client.futures_change_leverage(symbol=self.symbol, leverage=int(margin))
             # margin
         except (BinanceRequestException, BinanceAPIException):
-            msg_box("Cài đặt margin lỗi", "Lỗi")
+            error = "Cài đặt margin lỗi\n" + str(sys.exc_info()[1])
+            msg_box(error, "Lỗi")
 
-    def create_limit_order(self, symbol, quantity, price, stop_loss, margin, side):
-        try:
-            parameter = get_limit_from_parameter(symbol, quantity, price, margin, side)
-            error_string = f"Giá: {price}  số lượng: {quantity}  x: {margin} \n"
-            error = str(sys.exc_info()[1])
-            error_string = error_string + error
-            msg_box(error_string)
-            full_type = True
-            position = OTOControl(self.client, self.remove_position, parameter, stop_loss, full_type)
-            self.position_list.append(position)
-            msg_box("Đặt lệnh xong", "Thành công")
-        except:
-            pass
+    def make_position(self, datas):
+        for data in datas:
+            symbol, quantity, price, stop_loss, margin, side = data
+            try:
+                parameter = get_limit_from_parameter(symbol, quantity, price, margin, side)
+
+                full_type = True
+                if stop_loss < 0:
+                    full_type = False
+
+                position = OTOControl(self.client, self.remove_position, parameter, stop_loss, full_type)
+                self.position_list.append(position)
+
+            except:
+                error_string = f"Giá: {price}  số lượng: {quantity}  x: {margin} \n"
+                error = str(sys.exc_info()[1])
+                error_string = error_string + error
+                msg_box(error_string)
