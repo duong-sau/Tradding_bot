@@ -2,13 +2,15 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QDesktopWidget
 
-from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, dlFIBONACCI, \
-    dsFIBONACCI, uaFIBONACCI, dDISTANCE
+from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, ulFIBONACCI, dlFIBONACCI, \
+    usFIBONACCI, dsFIBONACCI, uaFIBONACCI, dDISTANCE
 from Common.m_common import m_math_dict
 from Common.n_common import n_math_dict
+from View.addvance_view import AdvanceView
 from View.combobox_view import ComboboxView
 from View.control_view import ControlView
 from View.input_view import InputView
+from View.pnl_view import PNLView
 from View.symbol_view import SymbolView
 
 
@@ -35,9 +37,21 @@ class MainWindow(QMainWindow):
 
         self.margin_textbox = self.combobox_view.margin_input
 
+        self.advance_view = AdvanceView()
+        self.stop_loss_textbox = self.advance_view.stop_loss_textbox
+        self.stop_loss_percent = self.advance_view.stop_loss_percent
+        self.take_profit1_textbox = self.advance_view.take_profit1_textbox
+        self.a = self.advance_view.a
+        self.take_profit1_percent = self.advance_view.take_profit1_percent
+        self.take_profit2_textbox = self.advance_view.take_profit2_textbox
+        self.b = self.advance_view.b
+        self.take_profit2_percent = self.advance_view.take_profit2_percent
+
         self.control_view = ControlView()
         self.long_button = self.control_view.long_button
         self.short_button = self.control_view.short_button
+
+        self.pnl_view = PNLView(self.test)
 
         self.symbol_view = SymbolView()
         self.mark_price_label = self.symbol_view.mark_label
@@ -57,7 +71,9 @@ class MainWindow(QMainWindow):
     def create_layout(self):
         layout = QGridLayout()
         layout.addWidget(self.input_view, 0, 0, 4, 4)
+        layout.addWidget(self.advance_view, 5, 0, 3, 4)
         layout.addWidget(self.combobox_view, 0, 4, 4, 2)
+        layout.addWidget(self.pnl_view, 5, 4, 3, 2)
         layout.addWidget(self.control_view, 8, 0, 1, 4)
         layout.addWidget(self.symbol_view, 8, 4, 1, 2)
 
@@ -95,12 +111,45 @@ class MainWindow(QMainWindow):
         self.update_symbol_signal.emit(symbol)
 
     def timer_run(self):
+        self.pnl_cal()
         self.update_n_max()
+
+    def pnl_cal(self):
+        long = self.tx_long.isChecked()
+        M = self.m_textbox.get_value()
+        ms = self.calculator_m()
+        ns = self.calculator_n()
+        SL = self.stop_loss_textbox.get_value()
+        TP1 = self.take_profit1_textbox.get_value()
+        a = self.a.get_value() / 100
+        TP2 = self.take_profit2_textbox.get_value()
+        X = self.margin_textbox.get_value()
+        try:
+
+            E = sum(x * y for x, y in zip(ms, ns)) / sum(ms)
+            if long:
+                L = E - (M / X)
+            else:
+                L = E + (M / X)
+            rx = (M * 0.1) / abs(SL - E)
+            sl = abs(SL - E) * 100 / E
+            tp1 = abs(TP1 - E) * 100 / E
+            tp2 = abs(TP2 - E) * 100 / E
+            self.pnl_view.set_text(L, rx, sl, tp1, tp2)
+        except:
+            pass
 
     def get_value(self):
         data = {
             'm_list': self.calculator_m(),
             'n_list': self.calculator_n(),
+            'min': self.min_textbox.get_value(),
+            'max': self.max_textbox.get_value(),
+            'sl': self.stop_loss_textbox.get_value(),
+            'tp1': self.take_profit1_textbox.get_value(),
+            'a': self.a.get_value() / 100,
+            'tp2': self.take_profit2_textbox.get_value(),
+            'b': self.b.get_value() / 100,
             'symbol': self.symbol_select.currentText(),
             'margin': self.margin_textbox.get_value()
         }
@@ -184,6 +233,10 @@ class MainWindow(QMainWindow):
                 if round(margin * m_val / n_val, 3) < 0.001:
                     return n - 1
 
+    @QtCore.pyqtSlot(float, float)
+    def update_pnl(self, pnl, sum_pnl):
+        self.pnl_view.update_pnl(pnl, sum_pnl)
+
     # def test(self):
     #     try:
     #         self.m_textbox.textbox.setText("10000")
@@ -208,7 +261,14 @@ class MainWindow(QMainWindow):
             self.n_textbox.textbox.setText('5')
             current_price = float(self.current_price_label.text())
             self.min_textbox.textbox.setText(str(current_price - 100))
+            # self.min_textbox.textbox.setText(str(29000))
+
             self.max_textbox.textbox.setText(str(current_price + 100))
+            # self.max_textbox.textbox.setText(str(30000))
+            self.a.textbox.setText('40')
+            self.stop_loss_textbox.textbox.setText(str(current_price - 120))
+            self.take_profit1_textbox.textbox.setText(str(current_price + 120))
+            self.take_profit2_textbox.textbox.setText(str(current_price + 180))
             self.margin_textbox.textbox.setText('1')
         except:
             pass

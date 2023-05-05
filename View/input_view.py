@@ -1,8 +1,10 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from View.a_common.HWidget import HWidget
+from View.a_common.TextBox.AllocatorTextBox import AllocatorTextBox
 from View.a_common.TextBox.FloatTextBox import FloatTextBox
 from View.a_common.TextBox.IntTextBox import IntTextBox
+from View.a_common.VWidget import VWidget
 
 
 class InputView(QWidget):
@@ -11,6 +13,7 @@ class InputView(QWidget):
 
         self.m_textbox = FloatTextBox('Số lượng tiền, đơn vị USD', 'M')
         self.n_textbox = IntTextBox('Số lệnh                         ', 'n')
+        self.input_w = VWidget(self.m_textbox, self.n_textbox)
 
         self.min_textbox = FloatTextBox('Min', 'M')
         self.max_textbox = FloatTextBox('Max', 'n')
@@ -25,8 +28,7 @@ class InputView(QWidget):
 
     def create_layout(self):
         layout = QVBoxLayout()
-        layout.addWidget(self.m_textbox)
-        layout.addWidget(self.n_textbox)
+        layout.addWidget(self.input_w)
         layout.addWidget(self.min_max_w)
         self.setLayout(layout)
 

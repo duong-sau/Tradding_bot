@@ -3,8 +3,8 @@ import re
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
 
-from Common.common import string_to_float_list
 from View.a_common.TextBox.TextBox import TextBox
+from Common.common import string_to_float_list
 
 
 class AllocatorTextBox(TextBox):

@@ -23,11 +23,12 @@ class ComboboxView(QWidget):
 
         self.m = HWidget(m_text, self.probability_box)
         self.margin_input = FloatTextBox('Margin', '')
+        self.margin_button = QPushButton("Change margin")
         self.create_layout()
 
     def create_layout(self):
         layout = QVBoxLayout()
         layout.addWidget(self.m)
         layout.addWidget(HWidget(self.long_radio, self.short_radio))
-        layout.addWidget(VWidget(self.margin_input))
+        layout.addWidget(VWidget(self.margin_input, self.margin_button))
         self.setLayout(layout)

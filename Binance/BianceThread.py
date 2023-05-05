@@ -10,6 +10,8 @@ from binance.exceptions import BinanceRequestException, BinanceAPIException
 
 from Binance import api_key, api_secret, testnet
 from Binance.Common import get_limit_from_parameter
+from Binance.OTOListener import OTOListener
+from Logic.Log import log_fail
 from View.a_common.MsgBox import msg_box
 
 
@@ -41,6 +43,7 @@ class CBinanceThread(QThread):
             while self.running:
                 self.test_connection()
                 self.update_price()
+                self.update_pnl()
                 time.sleep(0.25)
         except:
             print('retry')
@@ -70,6 +73,26 @@ class CBinanceThread(QThread):
         self.current_price = float(last_ticker['price'])
         self.update_price_signal.emit(mark_price, last_ticker['price'])
 
+    def update_pnl(self):
+        pnl = 0
+        for pos in self.position_list:
+            pnl = pos.get_pnl(self.current_price) + pnl
+        self.update_pnl_signal.emit(round(pnl, 3), round(self.pnl, 3))
+
+    def remove_position(self, position):
+        self.pnl = self.pnl + position.pnl
+        self.position_list.remove(position)
+        del position
+
+    def cancel_all(self):
+        for pos in self.position_list:
+            pos.cancel_all()
+
+    @QtCore.pyqtSlot(dict)
+    def handle_socket_event(self, msg):
+        for position in self.position_list:
+            position.handle(msg)
+
     @QtCore.pyqtSlot(str)
     def update_symbol(self, symbol):
         self.symbol = symbol
@@ -78,7 +101,7 @@ class CBinanceThread(QThread):
     def open_order(self, datas):
         confirm_str = ""
         for data in datas:
-            symbol, quantity, price, margin, side = data
+            symbol, quantity, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data
             confirm_str = confirm_str + f'Giá: {price}    |||| số lượng {quantity}\n'
 
         msg = QMessageBox()
@@ -88,27 +111,22 @@ class CBinanceThread(QThread):
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         if msg.exec() != QMessageBox.Ok:
             return
-        symbol, quantity, price, margin, side = datas[0]
-        self.change_margin(margin)
-        for data in datas:
-            symbol, quantity, price, margin, side = data
-            self.create_limit_order(symbol, quantity, price, margin, side)
-        msg_box("Đặt lệnh xong", "Thành công")
-
-    def change_margin(self, margin):
+        symbol, quantity, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = datas[0]
         try:
             self.client.futures_change_leverage(symbol=self.symbol, leverage=int(margin))
             # margin
-        except (BinanceRequestException, BinanceAPIException):
-            msg_box("Cài đặt margin lỗi", "Lỗi")
+        except:
+            log_fail("Lỗi set margin", str(sys.exc_info()[1]))
 
-    def create_limit_order(self, symbol, quantity, price, margin, side):
-        try:
+        for data in datas:
+            symbol, quantity, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data
             parameter = get_limit_from_parameter(symbol, quantity, price, margin, side)
-            order = self.client.futures_create_order(**parameter)
-            print(order)
-        except(BinanceRequestException, BinanceAPIException):
-            error_string = f"Giá: {price}   số lượng: {quantity}    margin {margin} \n"
-            error = str(sys.exc_info()[1])
-            error_string = error_string + error
-            msg_box(error_string)
+            position = OTOListener(self.client,
+                                   self.remove_position, self.cancel_all,
+                                   parameter,
+                                   stop_loss,
+                                   take_profit_1, a,
+                                   take_profit_2, b)
+            self.position_list.append(position)
+            position.make_limit_order()
+        msg_box("Đặt lệnh xong", "Thành công")
