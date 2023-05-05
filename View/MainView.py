@@ -70,15 +70,6 @@ class MainWindow(QMainWindow):
         self.long_button.clicked.connect(self.open_long)
         self.short_button.clicked.connect(self.open_short)
         self.symbol_select.currentTextChanged.connect(self.update_symbol)
-        self.combobox_view.button_group.buttonClicked.connect(self.check_enable_long_short)
-
-    def check_enable_long_short(self):
-        if self.tx_long.isChecked():
-            self.long_button.enable()
-            self.short_button.disable()
-        else:
-            self.long_button.disable()
-            self.short_button.enable()
 
     @QtCore.pyqtSlot()
     def open_long(self):
@@ -191,4 +182,33 @@ class MainWindow(QMainWindow):
             for m_val, n_val in zip(m_list, n_list):
 
                 if round(margin * m_val / n_val, 3) < 0.001:
-                    return n - 2
+                    return n - 1
+
+    # def test(self):
+    #     try:
+    #         self.m_textbox.textbox.setText("10000")
+    #         self.n_textbox.textbox.setText('5')
+    #         current_price = float(self.price_label.text())
+    #         self.min_textbox.textbox.setText(str(current_price - 100))
+    #         # self.min_textbox.textbox.setText(str(29000))
+    #
+    #         self.max_textbox.textbox.setText(str(current_price + 100))
+    #         # self.max_textbox.textbox.setText(str(30000))
+    #         self.a.textbox.setText('50')
+    #         self.stop_loss_textbox.textbox.setText(str(current_price - 200))
+    #         self.take_profit1_textbox.textbox.setText(str(current_price + 200))
+    #         self.take_profit2_textbox.textbox.setText(str(current_price + 300))
+    #         self.margin_textbox.textbox.setText('30')
+    #     except:
+    #         pass
+
+    def test(self):
+        try:
+            self.m_textbox.textbox.setText("1000")
+            self.n_textbox.textbox.setText('5')
+            current_price = float(self.current_price_label.text())
+            self.min_textbox.textbox.setText(str(current_price - 100))
+            self.max_textbox.textbox.setText(str(current_price + 100))
+            self.margin_textbox.textbox.setText('1')
+        except:
+            pass

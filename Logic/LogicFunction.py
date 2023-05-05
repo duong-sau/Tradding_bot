@@ -6,14 +6,14 @@ from View.a_common.MsgBox import msg_box
 def check_list_data(data, message):
     for value in data:
         if value == 0.0:
-            msg_box(message, "Lỗi")
+            msg_box("Lỗi", message)
             return False
     return True
 
 
 def check_val_data(data, message):
     if data == 0:
-        msg_box(message, "Lỗi")
+        msg_box("Lỗi", message)
         return False
     return True
 
@@ -44,7 +44,7 @@ def process(data):
         price = round_step_size(orders[i], 0.1)
         quantity = round(budgets[i] / price, 3)
         if quantity < 0.001:
-            msg_box("Trong budget có giá trị bằng 0", "Lỗi")
+            msg_box("Lỗi", "Trong budget có giá trị bằng 0")
             return False, []
 
         requests.append(
@@ -53,8 +53,5 @@ def process(data):
              price,
              margin,
              open_type))
-    requests = sorted(requests, key=lambda x: x[2])
-    if open_type == "BUY":
-        requests.reverse()
 
     return True, requests
