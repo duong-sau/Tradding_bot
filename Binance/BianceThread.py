@@ -108,7 +108,7 @@ class CBinanceThread(QThread):
             order = self.client.futures_create_order(**parameter)
             print(order)
         except(BinanceRequestException, BinanceAPIException):
-            error_string = f"Giá: {price}  số lượng: {quantity}  x: {margin} \n"
+            error_string = f"Giá: {price}   số lượng: {quantity}    margin {margin} \n"
             error = str(sys.exc_info()[1])
             error_string = error_string + error
             msg_box(error_string)
