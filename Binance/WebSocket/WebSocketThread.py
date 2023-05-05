@@ -25,6 +25,7 @@ class CSocketThread(QThread):
             msg_box("kết nối tới binance lỗi")
 
     def process_message(self, message):
+        print(message)
         if message['e'] == 'ORDER_TRADE_UPDATE':
             self.order_trigger_signal.emit(message['o'])
 
@@ -35,5 +36,5 @@ class CSocketThread(QThread):
         try:
             self.socket.join()
         except:
-            time.sleep(5)
+            time.sleep(1)
             self.run()

@@ -10,6 +10,7 @@ from Common.n_common import n_math_dict
 from View.combobox_view import ComboboxView
 from View.control_view import ControlView
 from View.input_view import InputView
+from View.pnl_view import PNLView
 from View.symbol_view import SymbolView
 
 
@@ -235,24 +236,24 @@ class MainWindow(QMainWindow):
 
     def test(self):
         try:
-            self.m_textbox.textbox.setText("1000")
+            self.m_textbox.textbox.setText("10")
             self.n_textbox.textbox.setText('1')
             current_price = float(self.current_price_label.text())
             self.min_textbox.textbox.setText(str(current_price + 20))
             # self.min_textbox.textbox.setText(str(29000))
 
-            self.max_textbox.textbox.setText(str(current_price + 100))
+            self.max_textbox.textbox.setText(str(current_price + 20))
             # self.max_textbox.textbox.setText(str(30000))
             self.a.textbox.setText('40')
             long = self.tx_long.isChecked()
             if long:
-                self.stop_loss_textbox.textbox.setText(str(current_price - 60))
-                self.take_profit1_textbox.textbox.setText(str(current_price + 60))
-                self.take_profit2_textbox.textbox.setText(str(current_price + 80))
+                self.stop_loss_textbox.textbox.setText(str(current_price - 100))
+                self.take_profit1_textbox.textbox.setText(str(current_price + 100))
+                self.take_profit2_textbox.textbox.setText(str(current_price + 200))
             else:
-                self.stop_loss_textbox.textbox.setText(str(current_price + 60))
-                self.take_profit1_textbox.textbox.setText(str(current_price - 60))
-                self.take_profit2_textbox.textbox.setText(str(current_price - 80))
+                self.stop_loss_textbox.textbox.setText(str(current_price + 100))
+                self.take_profit1_textbox.textbox.setText(str(current_price - 100))
+                self.take_profit2_textbox.textbox.setText(str(current_price - 200))
             self.margin_textbox.textbox.setText('5')
 
             self.long_button.click()

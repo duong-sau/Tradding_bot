@@ -1,4 +1,9 @@
-from Binance import get_client
+import sys
+
+from binance.exceptions import BinanceAPIException, BinanceRequestException
+
+from Binance.gClient import get_client
+from View.a_common.MsgBox import msg_box
 
 
 class Order:
@@ -14,15 +19,15 @@ class Order:
             client = get_client()
             order = client.futures_create_order(**self.parameter)
             self.id = order['orderId']
-        except:
-            # log_fail(self., str(sys.exc_info()[1]))
+        except(BinanceAPIException, BinanceRequestException):
+            msg_box(sys.exc_info()[1])
             raise
 
     def cancel(self):
         client = get_client()
         client.futures_cancel_order(
             symbol=self.parameter['symbol'],
-            OrderId=self.id
+            orderId=self.id
         )
 
     def get_order_id(self):
