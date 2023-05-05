@@ -1,8 +1,7 @@
-import logging
 import re
 
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPlainTextEdit, QPushButton
 from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPlainTextEdit, QPushButton
 
 message_format = \
     f'''
@@ -23,7 +22,7 @@ class PNLView(QWidget):
     def __init__(self, test, parent=None):
         super().__init__(parent)
         self.pnl, self.sum_pnl = 0, 0
-        self.L, self.rx, self.sl, self.tp1, self.tp2 = "", "", "", "", ""
+        self.L, self.rx, self.sl, self.tp1, self.tp2 = "0", "0", "", "", ""
         self.setWindowTitle("Log Window")
 
         # Tạo QPlainTextEdit để hiển thị console log
@@ -74,8 +73,8 @@ class PNLView(QWidget):
         self.sum_pnl = sum_pnl
         self.update()
 
-    def set_text(self, L, rx, sl, tp1, tp2):
-        self.L, self.rx, self.sl, self.tp1, self.tp2 = str(round(L, 3)), str(round(rx, 2)), str(round(sl, 3)), str(round(tp1, 3)), str(round(tp2, 3))
+    def set_text(self, sl, tp1, tp2):
+        self.sl, self.tp1, self.tp2 = str(round(sl, 3)), str(round(tp1, 3)), str(round(tp2, 3))
         self.update()
 
     def log_cant_cal(self):

@@ -1,6 +1,4 @@
 import configparser
-import ctypes
-import sys
 
 time_step = 1
 

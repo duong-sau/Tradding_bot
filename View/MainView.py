@@ -1,12 +1,12 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QDesktopWidget
-from View.addvance_view import AdvanceView
 
 from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, dlFIBONACCI, \
     dsFIBONACCI, uaFIBONACCI, dDISTANCE
 from Common.m_common import m_math_dict
 from Common.n_common import n_math_dict
+from View.addvance_view import AdvanceView
 from View.combobox_view import ComboboxView
 from View.control_view import ControlView
 from View.input_view import InputView
@@ -121,6 +121,7 @@ class MainWindow(QMainWindow):
 
     def timer_run(self):
         self.update_n_max()
+        self.update_metric()
 
     def get_value(self):
         data = {
@@ -216,6 +217,36 @@ class MainWindow(QMainWindow):
                 if round(margin * m_val / n_val, 3) < 0.001:
                     return n - 2
 
+    def update_metric(self):
+        try:
+            m_probability = self.get_m_probability()
+            m = self.m_textbox.get_value()
+
+            n_probability = self.get_n_probability()
+            n = self.n_textbox.get_value()
+            min_val = self.min_textbox.get_value()
+            max_val = self.max_textbox.get_value()
+
+            n_list = n_math_dict[n_probability](min_val, max_val, n)
+            m_list = m_math_dict[m_probability](0, m, n)
+
+            sum_mn = sum(a * b for a, b in zip(m_list, n_list))
+            sum_m = sum(m_list)
+
+            E = sum_mn/sum_m
+            X = self.margin_textbox.get_value()
+            SL = self.stop_loss_textbox.get_value()
+            TP1 = self.take_profit1_textbox.get_value()
+            TP2 = self.take_profit2_textbox.get_value()
+            a= self.a.get_value()
+            b= self.b.get_value()
+
+            r_sl = m*X*(SL-E)/E
+            r_tp1 = a*0.01*m*X*(TP1-E)/E
+            r_tp2 = b*0.01*m*X*(TP2-E)/E
+            self.pnl_view.set_text(r_sl, r_tp1, r_tp2)
+        except:
+            pass
     # def test(self):
     #     try:
     #         self.m_textbox.textbox.setText("10000")
@@ -236,18 +267,18 @@ class MainWindow(QMainWindow):
 
     def test(self):
         try:
-            self.m_textbox.textbox.setText("10")
-            self.n_textbox.textbox.setText('1')
+            self.m_textbox.textbox.setText("1000")
+            self.n_textbox.textbox.setText('5')
             current_price = float(self.current_price_label.text())
-            self.min_textbox.textbox.setText(str(current_price + 20))
+            self.min_textbox.textbox.setText(str(current_price - 250))
             # self.min_textbox.textbox.setText(str(29000))
 
-            self.max_textbox.textbox.setText(str(current_price + 20))
+            self.max_textbox.textbox.setText(str(current_price - 100))
             # self.max_textbox.textbox.setText(str(30000))
             self.a.textbox.setText('40')
             long = self.tx_long.isChecked()
             if long:
-                self.stop_loss_textbox.textbox.setText(str(current_price - 100))
+                self.stop_loss_textbox.textbox.setText(str(current_price - 250))
                 self.take_profit1_textbox.textbox.setText(str(current_price + 100))
                 self.take_profit2_textbox.textbox.setText(str(current_price + 200))
             else:

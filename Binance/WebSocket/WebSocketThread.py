@@ -4,6 +4,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from binance import ThreadedWebsocketManager
 
 from Binance import api_key, api_secret
+from Logic.Log import socket_log
 from View.a_common.MsgBox import msg_box
 
 
@@ -25,6 +26,7 @@ class CSocketThread(QThread):
             msg_box("kết nối tới binance lỗi")
 
     def process_message(self, message):
+        socket_log(message)
         print(message)
         if message['e'] == 'ORDER_TRADE_UPDATE':
             self.order_trigger_signal.emit(message['o'])

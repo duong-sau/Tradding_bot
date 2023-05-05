@@ -4,7 +4,6 @@ import time
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal, QThread
-from PyQt5.QtWidgets import QMessageBox
 from binance.client import Client
 from binance.exceptions import BinanceRequestException, BinanceAPIException
 
@@ -19,9 +18,6 @@ def check_testnet():
         MessageBox = ctypes.windll.user32.MessageBoxW
         MessageBox(None, 'Chưa cài đặt testnet', 'Lỗi', 0)
         sys.exit(0)
-
-
-
 
 
 class CBinanceThread(QThread):

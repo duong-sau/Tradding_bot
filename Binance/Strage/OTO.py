@@ -1,8 +1,4 @@
-import sys
-
 from binance.enums import ORDER_STATUS_CANCELED, ORDER_STATUS_FILLED, ORDER_STATUS_EXPIRED
-from binance.exceptions import BinanceAPIException, BinanceRequestException
-from View.a_common.MsgBox import msg_box
 
 
 class OTO:
@@ -38,3 +34,6 @@ class OTO:
 
     def get_order_id(self):
         return self.base_order.get_order_id() + self.trigger_order.get_order_id()
+
+    def cancel(self):
+        self.base_order.cancel()

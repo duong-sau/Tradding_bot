@@ -1,5 +1,3 @@
-import sys
-
 from binance.enums import ORDER_STATUS_CANCELED, ORDER_STATUS_FILLED, ORDER_STATUS_EXPIRED
 
 

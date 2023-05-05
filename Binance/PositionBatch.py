@@ -1,3 +1,5 @@
+from binance.exceptions import BinanceAPIException
+
 from Binance.Common.Common import convert_data_to_parameters
 from Binance.Order.LimitOrder import LimitOrder
 from Binance.Order.StopMarketOrder import StopMarketOrder
@@ -16,11 +18,16 @@ class PositionBatch:
             take_order = StopMarketOrder(take_parameter)
             stop_order = StopMarketOrder(stop_parameter)
 
-            position = OTOCO(limit_order, take_order, stop_order, self.remove_position)
+            position = OTOCO(limit_order, take_order, stop_order, self.remove_position, self.cancel_all)
             self.position_list.append(position)
 
     def cancel_all(self):
-        pass
+        for position in self.position_list:
+            try:
+                position.cancel()
+            except BinanceAPIException as e:
+                if e.code == -2011:
+                    print('2011')
 
     def remove_position(self, position):
         self.position_list.remove(position)
