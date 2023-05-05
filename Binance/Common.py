@@ -1,6 +1,7 @@
 import inspect
 
 import exrex
+from PyQt5.QtWidgets import QMessageBox
 
 from Logic.Log import log_order
 
@@ -85,3 +86,19 @@ def open_order(client, data, limit_order_id):
     log_order(action='Make order success', order_id=order['clientOrderId'], symbol=symbol, profit=profit,
               quantity=quantity, margin=margin, price=price, limit_order_id=limit_order_id)
     return order
+
+
+def confirm_order(datas):
+    confirm_str = ""
+    for data in datas:
+        symbol, quantity, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data
+        confirm_str = confirm_str + f'Giá: {price}    |||| số lượng {quantity}\n'
+
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Critical)
+    msg.setWindowTitle("Xác nhận đặt lệnh")
+    msg.setText(confirm_str)
+    msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+    if msg.exec() != QMessageBox.Ok:
+        return False
+    return True

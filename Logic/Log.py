@@ -39,12 +39,13 @@ def log_fail(limit_id, content):
 
 
 def put_log(row):
-    file = open(rf'.\log\{row[0]}.txt', mode='a')
-    for dat in row:
-        file.write(str(dat))
-        file.write(', ')
-    file.write('\n')
-    file.close()
+    pass
+    # file = open(rf'.\log\{row[0]}.txt', mode='a')
+    # for dat in row:
+    #     file.write(str(dat))
+    #     file.write(', ')
+    # file.write('\n')
+    # file.close()
     # t = threading.Thread(target=log_wrap, args=(row,))
     # t.start()
 

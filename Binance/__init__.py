@@ -22,3 +22,7 @@ elif testnet == 'False':
 else:
     testnet = 'error'
 
+debug = config['APP']['Debug']
+
+if debug == 'True':
+    debug = True

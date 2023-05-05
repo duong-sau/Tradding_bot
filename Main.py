@@ -15,25 +15,8 @@ from View.MainView import MainWindow
 from connection import register_connections
 import sys
 
-
-def handle_exception(exc_type, exc_value, exc_traceback):
-    # In ra thông báo lỗi và traceback
-    print("Unhandled exception:", exc_value)
-    log_fail(exc_type, exc_value)
-
-
-# Đăng ký hàm xử lý ngoại lệ cho toàn bộ ứng dụng Python
-sys.excepthook = handle_exception
-
 if __name__ == '__main__':
-    now = datetime.datetime.now()
 
-    # Định dạng thời gian theo định dạng dd/mm/yyyy hh:mm
-    current_time = now.strftime("%d/%m/%Y %H:%M")
-
-    # Lấy tên máy tính
-    hostname = gethostname()
-    log_fail(hostname, current_time)
     app = QApplication(sys.argv)
     extra = {
         # Font
