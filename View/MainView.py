@@ -263,12 +263,12 @@ class MainWindow(QMainWindow):
             self.min_textbox.textbox.setText(str(current_price - 100))
             # self.min_textbox.textbox.setText(str(29000))
 
-            self.max_textbox.textbox.setText(str(current_price + 100))
+            self.max_textbox.textbox.setText(str(current_price -50))
             # self.max_textbox.textbox.setText(str(30000))
             self.a.textbox.setText('40')
-            self.stop_loss_textbox.textbox.setText(str(current_price - 120))
-            self.take_profit1_textbox.textbox.setText(str(current_price + 120))
-            self.take_profit2_textbox.textbox.setText(str(current_price + 180))
+            self.stop_loss_textbox.textbox.setText(str(current_price - 250))
+            self.take_profit1_textbox.textbox.setText(str(current_price + 250))
+            self.take_profit2_textbox.textbox.setText(str(current_price + 300))
             self.margin_textbox.textbox.setText('1')
         except:
             pass

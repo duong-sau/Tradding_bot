@@ -1,9 +1,10 @@
-import inspect
+import sys
 
 import exrex
 from PyQt5.QtWidgets import QMessageBox
+from binance.exceptions import BinanceRequestException, BinanceAPIException
 
-from Logic.Log import log_order
+from Telegram.TelegramThread import error_notification
 
 
 def inflect_side(side):
@@ -34,65 +35,85 @@ def get_limit_from_parameter(symbol, quantity, price, margin, side):
     return order_param
 
 
-def get_stop_loss_form_limit(limit_order, stop_loss, quantity):
-    limit_side = limit_order['side']
+def get_stop_loss_from_parameter(symbol, quantity, price, side):
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
+    if side == "BUY":
+        position_side = "LONG"
+    else:
+        position_side = "SHORT"
     order_param = {
-        'symbol': limit_order['symbol'],
-        'side': inflect_side(limit_side),
+        'symbol': symbol,
+        'side': inflect_side(side),
         'quantity': quantity,
-        'stopPrice': stop_loss,
+        'stopPrice': price,
         'newClientOrderId': order_id,
-        'reduceOnly': True,
+        'positionSide': position_side,
         'type': 'STOP_MARKET',
         'newOrderRespType': "ACK"
     }
     return order_param
 
 
-def get_take_profit_form_limit(limit_order, take_profit, quantity):
-    limit_side = limit_order['side']
+def get_take_profit_from_parameter(symbol, quantity, price, side):
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
+    if side == "BUY":
+        position_side = "LONG"
+    else:
+        position_side = "SHORT"
     order_param = {
-        'symbol': limit_order['symbol'],
-        'side': inflect_side(limit_side),
+        'symbol': symbol,
+        'side': inflect_side(side),
         'quantity': quantity,
-        'stopPrice': take_profit,
+        'stopPrice': price,
         'newClientOrderId': order_id,
-        'reduceOnly': True,
+        'positionSide': position_side,
         'type': 'TAKE_PROFIT_MARKET',
         'newOrderRespType': "ACK"
     }
     return order_param
 
 
-def open_order(client, data, limit_order_id):
-    order_id = data['newClientOrderId']
-    action = inspect.getouterframes(inspect.currentframe())[1][3]
-    symbol = data['symbol']
-    profit = 0
-    quantity = data['quantity']
-    try:
-        price = data['price']
-    except:
-        price = data['stopPrice']
-    try:
-        margin = data['leverage']
-    except:
-        margin = 0
-    log_order(action=action, order_id=order_id, symbol=symbol, profit=profit, quantity=quantity, margin=margin,
-              price=price, limit_order_id=limit_order_id)
+def open_limit(client, symbol, quantity, price, margin, side):
+    data = get_limit_from_parameter(symbol, quantity, price, margin, side)
     order = client.futures_create_order(**data)
-    log_order(action='Make order success', order_id=order['clientOrderId'], symbol=symbol, profit=profit,
-              quantity=quantity, margin=margin, price=price, limit_order_id=limit_order_id)
-    return order
+    return order['orderId']
+
+
+def open_take_profit(client, symbol, quantity, price, side):
+    try:
+        data = get_take_profit_from_parameter(symbol, quantity, price, side)
+        order = client.futures_create_order(**data)
+        return order['orderId']
+    except(BinanceRequestException, BinanceAPIException):
+        error = str(sys.exc_info()[1])
+        error_notification(error)
+
+
+def open_stop_loss(client, symbol, quantity, price, side):
+    try:
+        data = get_stop_loss_from_parameter(symbol, quantity, price, side)
+        order = client.futures_create_order(**data)
+        return order['orderId']
+    except(BinanceRequestException, BinanceAPIException):
+        error = str(sys.exc_info()[1])
+        error_notification(error)
+
+
+def cancel_order(client, symbol, order_id):
+    try:
+        client.futures_cancel_order(
+            symbol=symbol,
+            orderId=order_id
+        )
+    except:
+        pass
 
 
 def confirm_order(datas):
     confirm_str = ""
     for data in datas:
-        symbol, quantity, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data
-        confirm_str = confirm_str + f'Giá: {price}    |||| số lượng {quantity}\n'
+        symbol, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data
+        confirm_str = confirm_str + f'Giá: {price}    |||| số lượng {a + b}\n'
 
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Critical)

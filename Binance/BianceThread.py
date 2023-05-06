@@ -7,8 +7,8 @@ from binance.client import Client
 from binance.exceptions import BinanceRequestException, BinanceAPIException
 
 from Binance import api_key, api_secret, testnet
-from Binance.Batch import Batch
 from Binance.Common import confirm_order
+from Binance.Controller import Controller
 from Logic.Log import log_fail
 from View.a_common.MsgBox import msg_box
 
@@ -20,6 +20,7 @@ class CBinanceThread(QThread):
 
     def __init__(self):
         super(CBinanceThread, self).__init__()
+        self.controller_list = []
         self.running = True
         self.symbol = 'BTCUSDT'
         self.client = Client(api_key, api_secret, testnet=testnet)
@@ -59,8 +60,12 @@ class CBinanceThread(QThread):
 
     @QtCore.pyqtSlot(dict)
     def handle_socket_event(self, msg):
-        for position in self.position_list:
-            position.handle(msg)
+        order_id = msg['i']
+        event = msg['X']
+        for controller in self.controller_list:
+            controller.handel(self.client, order_id, event)
+            if len(controller.position_list) == 0:
+                self.controller_list.remove(controller)
 
     @QtCore.pyqtSlot(str)
     def update_symbol(self, symbol):
@@ -70,11 +75,13 @@ class CBinanceThread(QThread):
     def open_order(self, datas):
         confirm_order(datas)
         self.set_margin(datas)
-        Batch(datas)
+        controller = Controller()
+        controller.add_position(self.client, datas)
+        self.controller_list.append(controller)
         msg_box("Đặt lệnh xong", "Thành công")
 
     def set_margin(self, data):
-        margin = data[0]['margin']
+        symbol,  price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data[0]
         try:
             self.client.futures_change_leverage(symbol=self.symbol, leverage=int(margin))
             # margin

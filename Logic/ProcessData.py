@@ -73,17 +73,20 @@ def process(data):
             a_quantity = quantity
             b_quantity = 0
 
+        # requests.append(
+        #     dict(symbol=symbol,
+        #          quantity=quantity,
+        #          price=price,
+        #          stop_loss=stop_loss,
+        #          take_profit_1=take_profit_1,
+        #          a_quantity=a_quantity,
+        #          take_profit_2=take_profit_2,
+        #          b_quantity=b_quantity,
+        #          margin=margin,
+        #          open_type=open_type)
+        # )
+        # symbol, price, margin, side, a, b, sl, tp1, tp2
         requests.append(
-            dict(symbol=symbol,
-                 quantity=quantity,
-                 price=price,
-                 stop_loss=stop_loss,
-                 take_profit_1=take_profit_1,
-                 a_quantity=a_quantity,
-                 take_profit_2=take_profit_2,
-                 b_quantity=b_quantity,
-                 margin=margin,
-                 open_type=open_type)
+            (symbol, price, margin, open_type, a_quantity, b_quantity, stop_loss, take_profit_1, take_profit_2)
         )
-
     return True, requests
