@@ -35,7 +35,7 @@ class CBinanceThread(QThread):
             while self.running:
                 self.update_price()
                 time.sleep(0.25)
-        except(BinanceRequestException, BinanceAPIException):
+        except:
             print('retry')
             self.retry()
 
@@ -73,7 +73,8 @@ class CBinanceThread(QThread):
 
     @QtCore.pyqtSlot(list)
     def open_order(self, datas):
-        confirm_order(datas)
+        if not confirm_order(datas):
+            return
         self.set_margin(datas)
         controller = Controller()
         controller.add_position(self.client, datas)

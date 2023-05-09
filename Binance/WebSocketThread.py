@@ -4,7 +4,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from binance import ThreadedWebsocketManager
 from binance.exceptions import BinanceAPIException, BinanceRequestException
 
-from Binance import api_key, api_secret
+from Binance import api_key, api_secret, testnet
 from View.a_common.MsgBox import msg_box
 
 
@@ -15,7 +15,7 @@ class CSocketThread(QThread):
         super(CSocketThread, self).__init__(parent)
         self.conn_key = None
         self.running = None
-        self.socket = ThreadedWebsocketManager(api_secret=api_secret, api_key=api_key, tld='vi', testnet=True)
+        self.socket = ThreadedWebsocketManager(api_secret=api_secret, api_key=api_key, tld='vi', testnet=testnet)
         self.retry()
 
     def retry(self):

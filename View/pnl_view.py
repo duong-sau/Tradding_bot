@@ -6,16 +6,10 @@ from PyQt5.QtGui import QFont
 
 message_format = \
     f'''
-Giá thanh lý           L        : %l%
+Stop loss    (%) : %sl% %
+T___ p__1    (%) : %tp1% %
+T___ p__2    (%) : %tp2% %
 
-Margin đề xuất         RX       : %rx%
-                       PNL      : %pnl%
-                       SUM-PNL  : %sumpnl%
-
-----------------------------------------------------------
-STOP LOSS     (%) : %sl% %
-T___ P__1     (%) : %tp1% %
-T___ P__2     (%) : %tp2% %
 '''
 
 
@@ -34,8 +28,8 @@ class PNLView(QWidget):
 
         # Tạo nút "Clear Log" để xóa nội dung trong QPlainTextEdit
         self.clear_button = QPushButton("Test")
-        layout.addWidget(self.clear_button)
-        self.clear_button.clicked.connect(test)
+        # layout.addWidget(self.clear_button)
+        # self.clear_button.clicked.connect(test)
 
         # Thiết lập font chữ và cỡ chữ cho QPlainTextEdit
         font = QFont("Consolas", 20)
@@ -47,7 +41,7 @@ class PNLView(QWidget):
                 background-color: black;
                 color: white;
                 font-family: Consolas;
-                font-size: 10pt;
+                font-size: 13pt;
             }
         """
         self.log_console.setStyleSheet(stylesheet)

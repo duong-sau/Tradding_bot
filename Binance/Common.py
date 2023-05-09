@@ -113,7 +113,7 @@ def confirm_order(datas):
     confirm_str = ""
     for data in datas:
         symbol, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data
-        confirm_str = confirm_str + f'Giá: {price}    |||| số lượng {a + b}\n'
+        confirm_str = confirm_str + f'Giá: {round(price,2)}   |||| số lượng {round(a + b, 3)}\n'
 
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Critical)

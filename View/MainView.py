@@ -6,6 +6,7 @@ from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, ulFIBONACCI, dlFIBON
     usFIBONACCI, dsFIBONACCI, uaFIBONACCI, dDISTANCE
 from Common.m_common import m_math_dict
 from Common.n_common import n_math_dict
+from View.a_common.MsgBox import msg_box
 from View.addvance_view import AdvanceView
 from View.combobox_view import ComboboxView
 from View.control_view import ControlView
@@ -63,9 +64,10 @@ class MainWindow(QMainWindow):
         self.setup_connections()
 
     def create_view(self):
-        desktop = QDesktopWidget()
-        screen_rect = desktop.screenGeometry()
-        self.setGeometry(0, 0, screen_rect.width(), screen_rect.height() - 50)
+        # desktop = QDesktopWidget()
+        # screen_rect = desktop.screenGeometry()
+        # self.setGeometry(0, 0, screen_rect.width(), screen_rect.height() - 50)
+        self.setGeometry(680, 200, 1020, 600)
         self.setWindowTitle('Trading Bot')
 
     def create_layout(self):
@@ -86,14 +88,45 @@ class MainWindow(QMainWindow):
         self.long_button.clicked.connect(self.open_long)
         self.short_button.clicked.connect(self.open_short)
         self.symbol_select.currentTextChanged.connect(self.update_symbol)
+        self.combobox_view.button_group.buttonClicked.connect(self.check_enable_long_short)
+
+    def check_enable_long_short(self):
+        if self.tx_long.isChecked():
+            self.long_button.enable()
+            self.short_button.disable()
+        else:
+            self.long_button.disable()
+            self.short_button.enable()
+
+    def DAC_check(self):
+        min_val = self.min_textbox.get_value()
+        max_val = self.max_textbox.get_value()
+        current_price = self.symbol_view.current_label.text()
+        current_price = float(current_price)
+        if min_val < current_price < max_val:
+            msg_box("Min < Price < Max")
+            return False
+        if self.tx_long.isChecked():
+            if min_val > current_price:
+                msg_box("Min > Price")
+                return False
+        else:
+            if max_val < current_price:
+                msg_box("Max < Price")
+                return False
+        return True
 
     @QtCore.pyqtSlot()
     def open_long(self):
+        if not self.DAC_check():
+            return
         data = self.get_value(), 'BUY'
         self.open_order_signal.emit(data)
 
     @QtCore.pyqtSlot()
     def open_short(self):
+        if not self.DAC_check():
+            return
         data = self.get_value(), 'SELL'
         self.open_order_signal.emit(data)
 
@@ -132,9 +165,9 @@ class MainWindow(QMainWindow):
             else:
                 L = E + (M / X)
             rx = (M * 0.1) / abs(SL - E)
-            sl = abs(SL - E) * 100 / E
-            tp1 = abs(TP1 - E) * 100 / E
-            tp2 = abs(TP2 - E) * 100 / E
+            sl = X * (SL - E) * 100 / E
+            tp1 = X * (TP1 - E) * 100 / E
+            tp2 = X * (TP2 - E) * 100 / E
             self.pnl_view.set_text(L, rx, sl, tp1, tp2)
         except:
             pass
@@ -231,7 +264,7 @@ class MainWindow(QMainWindow):
             for m_val, n_val in zip(m_list, n_list):
 
                 if round(margin * m_val / n_val, 3) < 0.001:
-                    return n - 1
+                    return n - 2
 
     @QtCore.pyqtSlot(float, float)
     def update_pnl(self, pnl, sum_pnl):
@@ -260,15 +293,19 @@ class MainWindow(QMainWindow):
             self.m_textbox.textbox.setText("1000")
             self.n_textbox.textbox.setText('5')
             current_price = float(self.current_price_label.text())
-            self.min_textbox.textbox.setText(str(current_price - 100))
-            # self.min_textbox.textbox.setText(str(29000))
-
-            self.max_textbox.textbox.setText(str(current_price -50))
-            # self.max_textbox.textbox.setText(str(30000))
             self.a.textbox.setText('40')
-            self.stop_loss_textbox.textbox.setText(str(current_price - 250))
-            self.take_profit1_textbox.textbox.setText(str(current_price + 250))
-            self.take_profit2_textbox.textbox.setText(str(current_price + 300))
             self.margin_textbox.textbox.setText('1')
+            if self.tx_long.isChecked():
+                self.min_textbox.textbox.setText(str(current_price - 100))
+                self.max_textbox.textbox.setText(str(current_price + 50))
+                self.stop_loss_textbox.textbox.setText(str(current_price - 250))
+                self.take_profit1_textbox.textbox.setText(str(current_price + 250))
+                self.take_profit2_textbox.textbox.setText(str(current_price + 300))
+            else:
+                self.min_textbox.textbox.setText(str(current_price + 100))
+                self.max_textbox.textbox.setText(str(current_price + 150))
+                self.stop_loss_textbox.textbox.setText(str(current_price + 300))
+                self.take_profit1_textbox.textbox.setText(str(current_price - 250))
+                self.take_profit2_textbox.textbox.setText(str(current_price - 300))
         except:
             pass

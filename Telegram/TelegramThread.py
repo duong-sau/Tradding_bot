@@ -1,11 +1,15 @@
 import telebot
+from telebot.apihelper import ApiTelegramException
 
 from Telegram import token, chat_id
 
 
 def tele_notification(content):
-    bot = telebot.TeleBot(token)
-    bot.send_message(chat_id, content)
+    try:
+        bot = telebot.TeleBot(token)
+        bot.send_message(chat_id, content)
+    except ApiTelegramException:
+        print('API exception')
 
 
 def take_1_notification(control_id, position_num):
