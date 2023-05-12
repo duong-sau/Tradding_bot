@@ -9,7 +9,6 @@ from binance.exceptions import BinanceRequestException, BinanceAPIException
 from Binance import api_key, api_secret, testnet
 from Binance.Common import confirm_order
 from Binance.Controller import Controller
-from Logic.Log import log_fail
 from View.a_common.MsgBox import msg_box
 
 
@@ -87,4 +86,4 @@ class CBinanceThread(QThread):
             self.client.futures_change_leverage(symbol=self.symbol, leverage=int(margin))
             # margin
         except(BinanceRequestException, BinanceAPIException):
-            log_fail("Lỗi set margin", str(sys.exc_info()[1]))
+            msg_box(sys.exc_info()[1])

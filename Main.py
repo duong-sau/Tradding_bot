@@ -10,7 +10,6 @@ from qt_material import apply_stylesheet
 from Binance.BianceThread import CBinanceThread
 from Binance.WebSocketThread import CSocketThread
 from Logic.CLogicThread import CLogicThread
-from Logic.Log import log_fail
 from View.MainView import MainWindow
 from connection import register_connections
 import sys
@@ -51,8 +50,6 @@ if __name__ == '__main__':
         binance_thread.set_symbols()
 
     except Exception:
-        # error
-        log_fail("System exit", str(sys.exc_info()[1]))
         traceback.print_exc()
 
         # stop
@@ -67,7 +64,6 @@ if __name__ == '__main__':
         binance_thread.stop()
         logic_thread.stop()
         socket_thread.stop()
-        log_fail("User exit", str(sys.exc_info()[1]))
         sys.exit(0)
     except:
-        log_fail("Lỗi giao diện", error)
+        sys.exit(0)
