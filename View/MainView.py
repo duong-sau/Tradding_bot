@@ -1,7 +1,8 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QDesktopWidget
-
+from binance.helpers import round_step_size
+from Binance.Common import get_tick_price
 from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, ulFIBONACCI, dlFIBONACCI, \
     usFIBONACCI, dsFIBONACCI, uaFIBONACCI, dDISTANCE
 from Common.m_common import m_math_dict
@@ -22,6 +23,8 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
 
+        self.PricePrecision = 0.01
+        self.QuantityPrecision = 0.001
         self.timer = QTimer()
         self.timer.timeout.connect(self.timer_run)
         self.timer.start(1000)
@@ -103,6 +106,9 @@ class MainWindow(QMainWindow):
         max_val = self.max_textbox.get_value()
         current_price = self.symbol_view.current_label.text()
         current_price = float(current_price)
+        if min_val > max_val:
+            msg_box("Min > Max")
+            return False
         if min_val < current_price < max_val:
             msg_box("Min < Price < Max")
             return False
@@ -120,14 +126,14 @@ class MainWindow(QMainWindow):
     def open_long(self):
         if not self.DAC_check():
             return
-        data = self.get_value(), 'BUY'
+        data = self.get_value(), 'LONG'
         self.open_order_signal.emit(data)
 
     @QtCore.pyqtSlot()
     def open_short(self):
         if not self.DAC_check():
             return
-        data = self.get_value(), 'SELL'
+        data = self.get_value(), 'SHORT'
         self.open_order_signal.emit(data)
 
     @QtCore.pyqtSlot(str, str)
@@ -141,6 +147,7 @@ class MainWindow(QMainWindow):
 
     @QtCore.pyqtSlot(str)
     def update_symbol(self, symbol):
+        self.PricePrecision, self.QuantityPrecision = get_tick_price(symbol)
         self.update_symbol_signal.emit(symbol)
 
     def timer_run(self):
@@ -261,10 +268,12 @@ class MainWindow(QMainWindow):
         for n in range(2, 50, 1):
             n_list = n_math_dict[n_probability](min_val, max_val, n)
             m_list = m_math_dict[m_probability](0, m, n)
-            for m_val, n_val in zip(m_list, n_list):
 
-                if round(margin * m_val / n_val, 3) < 0.001:
+            for m_val, n_val in zip(m_list, n_list):
+                if round_step_size(margin * m_val / n_val, self.QuantityPrecision) < self.QuantityPrecision:
                     return n - 2
+                if margin * m_val < 5:
+                    return n-2
 
     @QtCore.pyqtSlot(float, float)
     def update_pnl(self, pnl, sum_pnl):

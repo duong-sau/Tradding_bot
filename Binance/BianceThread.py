@@ -6,7 +6,7 @@ from PyQt5.QtCore import pyqtSignal, QThread
 from binance.client import Client
 from binance.exceptions import BinanceRequestException, BinanceAPIException
 
-from Binance import api_key, api_secret, testnet
+from Binance import api_key, api_secret, testnet, symbol_list
 from Binance.Common import confirm_order
 from Binance.Controller import Controller
 from View.a_common.MsgBox import msg_box
@@ -43,13 +43,9 @@ class CBinanceThread(QThread):
 
     def set_symbols(self):
         exchange_info = self.client.get_exchange_info()
-        symbols = exchange_info['symbols']
-        symbol_names = ['BTCUSDT', 'BTCBUSD']
-        for symbol in symbols:
-            symbol_name = symbol['symbol']
-            if symbol_name in symbols:
-                continue
-            symbol_names.append(symbol_name)
+        # symbols = exchange_info['symbols']
+        # symbol_names = ['BTCUSDT', 'BTCBUSD']
+        symbol_names = symbol_list
         self.set_symbols_signal.emit(symbol_names)
 
     def update_price(self):
@@ -81,7 +77,7 @@ class CBinanceThread(QThread):
         msg_box("Đặt lệnh xong", "Thành công")
 
     def set_margin(self, data):
-        symbol,  price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data[0]
+        symbol, price, margin, side, a, b, stop_loss, take_profit_1, take_profit_2 = data[0]
         try:
             self.client.futures_change_leverage(symbol=self.symbol, leverage=int(margin))
             # margin

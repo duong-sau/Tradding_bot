@@ -3,70 +3,53 @@ import sys
 import exrex
 from PyQt5.QtWidgets import QMessageBox
 from binance.exceptions import BinanceRequestException, BinanceAPIException
+from binance.client import Client
 
+from Binance import symbol_size
 from Telegram.TelegramThread import error_notification
 
 
-def inflect_side(side):
-    if side == "BUY":
-        return "SELL"
-    else:
-        return "BUY"
-
-
-def get_limit_from_parameter(symbol, quantity, price, margin, side):
+def get_limit_from_parameter(symbol, quantity, price, margin, ps_side):
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
-    if side == "BUY":
-        position_side = "LONG"
-    else:
-        position_side = "SHORT"
     order_param = {
         'symbol': symbol,
-        'side': side,
+        'side': 'BUY',
         'price': price,
         'quantity': quantity,
         'leverage': margin,
         'type': 'LIMIT',
         'newClientOrderId': order_id,
-        'positionSide': position_side,
+        'positionSide': ps_side,
         'timeInForce': 'GTC',
         'newOrderRespType': "ACK"
     }
     return order_param
 
 
-def get_stop_loss_from_parameter(symbol, quantity, price, side):
+def get_stop_loss_from_parameter(symbol, quantity, price, ps_side):
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
-    if side == "BUY":
-        position_side = "LONG"
-    else:
-        position_side = "SHORT"
     order_param = {
         'symbol': symbol,
-        'side': inflect_side(side),
+        'side': 'SELL',
         'quantity': quantity,
         'stopPrice': price,
         'newClientOrderId': order_id,
-        'positionSide': position_side,
+        'positionSide': ps_side,
         'type': 'STOP_MARKET',
         'newOrderRespType': "ACK"
     }
     return order_param
 
 
-def get_take_profit_from_parameter(symbol, quantity, price, side):
+def get_take_profit_from_parameter(symbol, quantity, price, ps_side):
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
-    if side == "BUY":
-        position_side = "LONG"
-    else:
-        position_side = "SHORT"
     order_param = {
         'symbol': symbol,
-        'side': inflect_side(side),
+        'side': 'SELL',
         'quantity': quantity,
         'stopPrice': price,
         'newClientOrderId': order_id,
-        'positionSide': position_side,
+        'positionSide': ps_side,
         'type': 'TAKE_PROFIT_MARKET',
         'newOrderRespType': "ACK"
     }
@@ -112,8 +95,8 @@ def cancel_order(client, symbol, order_id):
 def confirm_order(datas):
     confirm_str = ""
     for data in datas:
-        symbol, price, stop_loss, take_profit_1, a, take_profit_2, b, margin, side = data
-        confirm_str = confirm_str + f'Giá: {round(price,2)}   |||| số lượng {round(a + b, 3)}\n'
+        symbol, price, margin, side, a, b, sl, tp1, tp2 = data
+        confirm_str = confirm_str + f'Giá: {round(price, 2)}   |||| số lượng {round(a + b, 3)}\n'
 
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Critical)
@@ -123,3 +106,9 @@ def confirm_order(datas):
     if msg.exec() != QMessageBox.Ok:
         return False
     return True
+
+
+def get_tick_price(symbol):
+    symbol_data = symbol_size
+    config = symbol_data[symbol]
+    return config[0], config[1]

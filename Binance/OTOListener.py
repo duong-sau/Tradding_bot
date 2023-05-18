@@ -1,5 +1,5 @@
 import sys
-
+from decimal import Decimal
 from binance.exceptions import BinanceRequestException, BinanceAPIException
 
 from Binance.Common import open_limit, open_stop_loss, open_take_profit, cancel_order
@@ -37,7 +37,8 @@ class OTOListener:
 
     def make_limit_order(self):
         try:
-            self.limit_order = open_limit(self.client, self.symbol, self.a + self.b, self.price, self.margin, self.side)
+            quantity = round(self.a+self.b, 5)
+            self.limit_order = open_limit(self.client, self.symbol, quantity, self.price, self.margin, self.side)
         except(BinanceRequestException, BinanceAPIException):
             error = str(sys.exc_info()[1])
             msg_box(error)

@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMessageBox
 from binance.helpers import round_step_size
 
+from Binance.Common import get_tick_price
 from View.a_common.MsgBox import msg_box
 
 
@@ -47,7 +48,10 @@ def pre_proces(budgets, orders, stop_loss, take_profit, take_profit2, margin):
 def process(data):
     requests = []
     data, open_type = data
+
     budgets, orders = data['m_list'], data['n_list']
+
+    PricePrecision, QuantityPrecision = get_tick_price(data['symbol'])
 
     if not pre_proces(budgets, orders, data['sl'], data['tp1'], data['tp2'], data['margin']):
         return False, []
@@ -56,20 +60,20 @@ def process(data):
         symbol = data['symbol']
         margin = data['margin']
 
-        price = round_step_size(orders[i], 0.1)
-        quantity = round(budgets[i] / price, 3)
-        if quantity < 0.001:
+        price = round_step_size(orders[i], PricePrecision)
+        quantity = round_step_size(budgets[i] / price, QuantityPrecision)
+        if quantity < QuantityPrecision:
             msg_box("Lỗi", "Trong budget có giá trị bằng 0")
             return False, []
 
-        stop_loss = round_step_size(data['sl'], 0.10)
-        take_profit_1 = round_step_size(data['tp1'], 0.10)
-        take_profit_2 = round_step_size(data['tp2'], 0.10)
+        stop_loss = round_step_size(data['sl'], PricePrecision)
+        take_profit_1 = round_step_size(data['tp1'], PricePrecision)
+        take_profit_2 = round_step_size(data['tp2'], PricePrecision)
 
-        a_quantity = round(quantity * data['a'], 3)
-        b_quantity = round(quantity - a_quantity, 3)
+        a_quantity = round_step_size(quantity * data['a'], QuantityPrecision)
+        b_quantity = round_step_size(quantity - a_quantity, QuantityPrecision)
 
-        if a_quantity < 0.001 or b_quantity < 0.001:
+        if a_quantity < QuantityPrecision or b_quantity < QuantityPrecision:
             a_quantity = quantity
             b_quantity = 0
 

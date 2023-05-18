@@ -1,0 +1,17 @@
+
+{
+  "BTCUSDT": [0.1, 0.001],
+  "BNBUSDT": [0.01, 0.001],
+  "MATICUSDT": [0.1, 1],
+  "FTMUSDT": [0.1, 1],
+  "APTUSDT": [0.01, 0.1],
+  "GALAUSDT": [0.1, 1],
+
+
+  "BTCBUSD": [0.1, 0.001],
+  "BNBBUSD": [0.01, 0.001],
+  "MATICBUSD": [0.1, 1],
+  "FTMBUSD": [0.1, 1],
+  "APTBUSD": [0.01, 0.1],
+  "GALABUSD": [0.1, 1]
+}
