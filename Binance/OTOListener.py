@@ -1,5 +1,5 @@
 import sys
-from decimal import Decimal
+
 from binance.exceptions import BinanceRequestException, BinanceAPIException
 
 from Binance.Common import open_limit, open_stop_loss, open_take_profit, cancel_order
@@ -82,7 +82,7 @@ class OTOListener:
         self.tp1_order = open_take_profit(self.client, self.symbol, self.a, self.tp1, self.side)
 
     def make_take_profit_2_order(self):
-        self.tp2_order = open_take_profit(self.client, self.symbol, self.a, self.tp2, self.side)
+        self.tp2_order = open_take_profit(self.client, self.symbol, self.b, self.tp2, self.side)
 
     # ----------------------------------------------------------------------------------------------------
     # Cancel Order

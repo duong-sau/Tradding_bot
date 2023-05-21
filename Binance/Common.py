@@ -3,17 +3,20 @@ import sys
 import exrex
 from PyQt5.QtWidgets import QMessageBox
 from binance.exceptions import BinanceRequestException, BinanceAPIException
-from binance.client import Client
 
 from Binance import symbol_size
 from Telegram.TelegramThread import error_notification
 
 
 def get_limit_from_parameter(symbol, quantity, price, margin, ps_side):
+    if ps_side == 'LONG':
+        side = 'BUY'
+    else:
+        side = 'SELL'
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
     order_param = {
         'symbol': symbol,
-        'side': 'BUY',
+        'side': side,
         'price': price,
         'quantity': quantity,
         'leverage': margin,
@@ -27,30 +30,40 @@ def get_limit_from_parameter(symbol, quantity, price, margin, ps_side):
 
 
 def get_stop_loss_from_parameter(symbol, quantity, price, ps_side):
+    if ps_side == 'LONG':
+        side = 'SELL'
+    else:
+        side = 'BUY'
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
     order_param = {
         'symbol': symbol,
-        'side': 'SELL',
+        'side': side,
         'quantity': quantity,
+        'price': price,
         'stopPrice': price,
         'newClientOrderId': order_id,
         'positionSide': ps_side,
-        'type': 'STOP_MARKET',
+        'type': 'STOP',
         'newOrderRespType': "ACK"
     }
     return order_param
 
 
 def get_take_profit_from_parameter(symbol, quantity, price, ps_side):
+    if ps_side == 'LONG':
+        side = 'SELL'
+    else:
+        side = 'BUY'
     order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
     order_param = {
         'symbol': symbol,
-        'side': 'SELL',
+        'side': side,
         'quantity': quantity,
+        'price': price,
         'stopPrice': price,
         'newClientOrderId': order_id,
         'positionSide': ps_side,
-        'type': 'TAKE_PROFIT_MARKET',
+        'type': 'TAKE_PROFIT',
         'newOrderRespType': "ACK"
     }
     return order_param
@@ -77,7 +90,7 @@ def open_stop_loss(client, symbol, quantity, price, side):
         data = get_stop_loss_from_parameter(symbol, quantity, price, side)
         order = client.futures_create_order(**data)
         return order['orderId']
-    except(BinanceRequestException, BinanceAPIException):
+    except:
         error = str(sys.exc_info()[1])
         error_notification(error)
 

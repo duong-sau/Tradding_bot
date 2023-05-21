@@ -12,7 +12,7 @@ class CLogicThread(QThread):
 
     def __init__(self, parent=None):
         super(CLogicThread, self).__init__(parent)
-        self.running = None
+        self.running = True
 
     def run(self):
         while self.running:

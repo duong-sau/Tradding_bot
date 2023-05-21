@@ -1,5 +1,8 @@
+import inspect
+import sys
+from datetime import datetime
+
 import telebot
-from telebot.apihelper import ApiTelegramException
 
 from Telegram import token, chat_id
 
@@ -8,8 +11,8 @@ def tele_notification(content):
     try:
         bot = telebot.TeleBot(token)
         bot.send_message(chat_id, content)
-    except ApiTelegramException:
-        print('API exception')
+    except:
+        all_log()
 
 
 def take_1_notification(control_id, position_num):
@@ -38,3 +41,21 @@ def end_notification(control_id):
 
 def error_notification(message):
     tele_notification(f'Lỗi    {message}')
+
+
+def log_error():
+    previous_frame = inspect.currentframe().f_back
+    calling_function_name = previous_frame.f_code.co_name
+    last_error = sys.exc_info()[1]
+    tele_notification(f'Lỗi    {calling_function_name} |||  last error {last_error}')
+
+
+def all_log():
+    file = open('log.txt', mode='a')
+    current_time = datetime.now()
+    formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
+    last_error = sys.exc_info()[1]
+    previous_frame = inspect.currentframe().f_back
+    calling_function_name = previous_frame.f_code.co_name
+    file.write(f"{formatted_time} || {last_error} || {calling_function_name}")
+    file.close()

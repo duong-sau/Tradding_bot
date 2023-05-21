@@ -1,10 +1,11 @@
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal, QTimer
-from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QDesktopWidget
+from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout
 from binance.helpers import round_step_size
+
 from Binance.Common import get_tick_price
-from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, ulFIBONACCI, dlFIBONACCI, \
-    usFIBONACCI, dsFIBONACCI, uaFIBONACCI, dDISTANCE
+from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, dlFIBONACCI, \
+    dsFIBONACCI, uaFIBONACCI, dDISTANCE
 from Common.m_common import m_math_dict
 from Common.n_common import n_math_dict
 from View.a_common.MsgBox import msg_box
@@ -72,6 +73,7 @@ class MainWindow(QMainWindow):
         # self.setGeometry(0, 0, screen_rect.width(), screen_rect.height() - 50)
         self.setGeometry(680, 200, 1020, 600)
         self.setWindowTitle('Trading Bot')
+        self.setWindowIcon(QtGui.QIcon('logo.ico'))
 
     def create_layout(self):
         layout = QGridLayout()
@@ -102,6 +104,7 @@ class MainWindow(QMainWindow):
             self.short_button.enable()
 
     def DAC_check(self):
+        return True
         min_val = self.min_textbox.get_value()
         max_val = self.max_textbox.get_value()
         current_price = self.symbol_view.current_label.text()
@@ -273,7 +276,7 @@ class MainWindow(QMainWindow):
                 if round_step_size(margin * m_val / n_val, self.QuantityPrecision) < self.QuantityPrecision:
                     return n - 2
                 if margin * m_val < 5:
-                    return n-2
+                    return n - 2
 
     @QtCore.pyqtSlot(float, float)
     def update_pnl(self, pnl, sum_pnl):

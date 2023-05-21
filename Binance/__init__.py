@@ -1,7 +1,5 @@
 import configparser
-import ctypes
 import json
-import sys
 
 time_step = 1
 

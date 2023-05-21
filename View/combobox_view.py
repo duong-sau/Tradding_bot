@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QComboBox, QVBoxLayout, QLabel, QPushButton, QButtonGroup, QRadioButton
+from PyQt5.QtWidgets import QWidget, QComboBox, QVBoxLayout, QLabel, QButtonGroup, QRadioButton
 
 from Common.common import probability_list
 from View.a_common.HWidget import HWidget

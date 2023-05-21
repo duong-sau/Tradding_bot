@@ -1,8 +1,7 @@
-import logging
 import re
 
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPlainTextEdit, QPushButton
 from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPlainTextEdit, QPushButton
 
 message_format = \
     f'''
