@@ -46,8 +46,9 @@ def error_notification(message):
 def log_error():
     previous_frame = inspect.currentframe().f_back
     calling_function_name = previous_frame.f_code.co_name
+    calling_file_name = previous_frame.f_code.co_filename
     last_error = sys.exc_info()[1]
-    tele_notification(f'Lỗi    {calling_function_name} |||  last error {last_error}')
+    tele_notification(f'Lỗi    {calling_function_name} |||  last error {last_error} ||| {calling_file_name}')
 
 
 def all_log():
@@ -57,5 +58,5 @@ def all_log():
     last_error = sys.exc_info()[1]
     previous_frame = inspect.currentframe().f_back
     calling_function_name = previous_frame.f_code.co_name
-    file.write(f"{formatted_time} || {last_error} || {calling_function_name}")
+    file.write(f"{formatted_time} || {last_error} || {calling_function_name} \n")
     file.close()

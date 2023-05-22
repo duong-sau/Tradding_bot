@@ -39,11 +39,10 @@ def get_stop_loss_from_parameter(symbol, quantity, price, ps_side):
         'symbol': symbol,
         'side': side,
         'quantity': quantity,
-        'price': price,
         'stopPrice': price,
         'newClientOrderId': order_id,
         'positionSide': ps_side,
-        'type': 'STOP',
+        'type': 'STOP_MARKET',
         'newOrderRespType': "ACK"
     }
     return order_param
@@ -60,10 +59,28 @@ def get_take_profit_from_parameter(symbol, quantity, price, ps_side):
         'side': side,
         'quantity': quantity,
         'price': price,
-        'stopPrice': price,
         'newClientOrderId': order_id,
         'positionSide': ps_side,
-        'type': 'TAKE_PROFIT',
+        'timeInForce': 'GTC',
+        'type': 'LIMIT',
+        'newOrderRespType': "ACK"
+    }
+    return order_param
+
+
+def get_market_from_parameter(symbol, quantity, ps_side):
+    if ps_side == 'LONG':
+        side = 'SELL'
+    else:
+        side = 'BUY'
+    order_id = exrex.getone(r'vduongsauv[a-z0-9]{12}')
+    order_param = {
+        'symbol': symbol,
+        'side': side,
+        'quantity': quantity,
+        'newClientOrderId': order_id,
+        'positionSide': ps_side,
+        'type': 'MARKET',
         'newOrderRespType': "ACK"
     }
     return order_param
@@ -90,6 +107,21 @@ def open_stop_loss(client, symbol, quantity, price, side):
         data = get_stop_loss_from_parameter(symbol, quantity, price, side)
         order = client.futures_create_order(**data)
         return order['orderId']
+    except BinanceAPIException as e:
+        error_code = e.code
+        if error_code == -2021:
+            force_stop_loss(client, symbol, quantity, side)
+            return False
+        else:
+            error = str(sys.exc_info()[1])
+            error_notification(error)
+            return False
+
+
+def force_stop_loss(client, symbol, quantity, side):
+    try:
+        data = get_market_from_parameter(symbol, quantity, side)
+        client.futures_create_order(**data)
     except:
         error = str(sys.exc_info()[1])
         error_notification(error)

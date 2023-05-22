@@ -4,7 +4,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from binance import ThreadedWebsocketManager
 
 from Binance import api_key, api_secret, testnet
-from Telegram.TelegramThread import log_error
+from Telegram.TelegramThread import log_error, tele_notification
 
 
 class CSocketThread(QThread):
@@ -14,11 +14,11 @@ class CSocketThread(QThread):
         super(CSocketThread, self).__init__(parent)
         self.conn_key, self.socket = None, None
         self.running = True
-
-    def retry(self):
         self.socket = ThreadedWebsocketManager(api_secret=api_secret, api_key=api_key, testnet=testnet)
         self.socket.start()
         self.conn_key = self.socket.start_futures_user_socket(callback=self.process_message)
+
+    def retry(self):
         self.socket.join()
 
     def process_message(self, message):
@@ -30,6 +30,7 @@ class CSocketThread(QThread):
 
     def run(self) -> None:
         while self.running:
+            tele_notification("Socket thread is runing")
             try:
                 self.retry()
             except:
