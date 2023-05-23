@@ -6,7 +6,6 @@ from qt_material import apply_stylesheet
 from Binance.BianceThread import CBinanceThread
 from Binance.WebSocketThread import CSocketThread
 from Logic.CLogicThread import CLogicThread
-from Logic.Log import init_log
 from Telegram.TelegramThread import log_error, error_notification, all_log
 from View.MainView import MainWindow
 from connection import register_connections
@@ -20,7 +19,6 @@ def handle_exception(exc_type, exc_value, exc_traceback):
         all_log()
 
 
-# Đăng ký hàm xử lý ngoại lệ cho toàn bộ ứng dụng Python
 sys.excepthook = handle_exception
 
 if __name__ == '__main__':
@@ -55,7 +53,6 @@ if __name__ == '__main__':
 
         # View
         mainWindow.show()
-        binance_thread.set_symbols()
 
     except Exception:
         log_error()
