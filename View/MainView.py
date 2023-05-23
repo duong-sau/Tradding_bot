@@ -1,13 +1,14 @@
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout
+from binance import Client
 from binance.helpers import round_step_size
 
-from Binance.Common import get_tick_price
 from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, dlFIBONACCI, \
     dsFIBONACCI, uaFIBONACCI, dDISTANCE
 from Common.m_common import m_math_dict
 from Common.n_common import n_math_dict
+from View import testnet, symbol_list, get_tick_price
 from View.a_common.MsgBox import msg_box
 from View.addvance_view import AdvanceView
 from View.combobox_view import ComboboxView
@@ -66,6 +67,8 @@ class MainWindow(QMainWindow):
         self.create_view()
         self.create_layout()
         self.setup_connections()
+        self.init_symbols()
+        self.client = Client(testnet=testnet)
 
     def create_view(self):
         # desktop = QDesktopWidget()
@@ -139,14 +142,15 @@ class MainWindow(QMainWindow):
         data = self.get_value(), 'SHORT'
         self.open_order_signal.emit(data)
 
-    @QtCore.pyqtSlot(str, str)
-    def update_price(self, mark, current):
-        self.mark_price_label.setText(mark)
-        self.current_price_label.setText(current)
+    def update_price(self):
+        selected_symbol = self.symbol_select.currentText()
+        ticker = self.client.futures_mark_price(symbol=selected_symbol)
+        last_ticker = self.client.futures_symbol_ticker(symbol=selected_symbol)
+        self.mark_price_label.setText(ticker['markPrice'])
+        self.current_price_label.setText(last_ticker['price'])
 
-    @QtCore.pyqtSlot(list)
-    def set_symbols(self, symbol_names):
-        self.symbol_select.addItems(symbol_names)
+    def init_symbols(self):
+        self.symbol_select.addItems(symbol_list)
 
     @QtCore.pyqtSlot(str)
     def update_symbol(self, symbol):
@@ -154,6 +158,7 @@ class MainWindow(QMainWindow):
         self.update_symbol_signal.emit(symbol)
 
     def timer_run(self):
+        self.update_price()
         self.pnl_cal()
         self.update_n_max()
 

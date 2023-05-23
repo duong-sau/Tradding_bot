@@ -1,3 +1,5 @@
+import time
+
 from PyQt5.QtCore import QThread, pyqtSignal
 from binance import ThreadedWebsocketManager
 
@@ -27,7 +29,8 @@ class CSocketThread(QThread):
 
     def run(self) -> None:
         while self.running:
-            socket_running = self.socket.isAlive()
+            time.sleep(1)
+            socket_running = self.socket.is_alive()
             if socket_running:
                 print('socket is running')
             else:

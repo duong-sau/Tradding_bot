@@ -3,8 +3,6 @@ import sys
 import exrex
 from PyQt5.QtWidgets import QMessageBox
 from binance.exceptions import BinanceRequestException, BinanceAPIException
-
-from Binance import symbol_size
 from Telegram.TelegramThread import error_notification
 
 
@@ -152,8 +150,3 @@ def confirm_order(datas):
         return False
     return True
 
-
-def get_tick_price(symbol):
-    symbol_data = symbol_size
-    config = symbol_data[symbol]
-    return config[0], config[1]

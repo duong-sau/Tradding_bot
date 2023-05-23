@@ -28,6 +28,3 @@ class CLogicThread(QThread):
             return
         self.open_order_signal.emit(data)
 
-    @QtCore.pyqtSlot(str, str)
-    def update_price(self, mark, current):
-        self.update_price_signal.emit(mark, current)

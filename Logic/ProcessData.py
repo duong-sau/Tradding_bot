@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QMessageBox
 from binance.helpers import round_step_size
 
-from Binance.Common import get_tick_price
+from View import get_tick_price
 from View.a_common.MsgBox import msg_box
 
 

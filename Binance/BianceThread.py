@@ -5,7 +5,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal, QThread
 from binance.client import Client
 
-from Binance import api_key, api_secret, testnet, symbol_list
+from Binance import api_key, api_secret, testnet
 from Binance.Common import confirm_order
 from Binance.Controller import Controller
 from Telegram.TelegramThread import log_error
@@ -22,21 +22,15 @@ class CBinanceThread(QThread):
         self.client = None
         self.controller_list = []
         self.running = True
-        self.symbol = 'BTCUSDT'
 
     def retry(self):
         self.client = Client(api_key, api_secret, testnet=testnet)
-
-    def proces_run(self):
-        while self.running:
-            self.update_price()
-            time.sleep(0.25)
 
     def run(self):
         while self.running:
             try:
                 self.retry()
-                self.proces_run()
+                self.client.ping()
             except:
                 log_error()
                 time.sleep(5)
@@ -44,17 +38,6 @@ class CBinanceThread(QThread):
     def stop(self):
         self.running = False
 
-    def set_symbols(self):
-        # exchange_info = self.client.get_exchange_info()
-        # symbols = exchange_info['symbols']
-        # symbol_names = ['BTCUSDT', 'BTCBUSD']
-        symbol_names = symbol_list
-        self.set_symbols_signal.emit(symbol_names)
-
-    def update_price(self):
-        ticker = self.client.futures_mark_price(symbol=self.symbol)
-        last_ticker = self.client.futures_symbol_ticker(symbol=self.symbol)
-        self.update_price_signal.emit(ticker['markPrice'], last_ticker['price'])
 
     @QtCore.pyqtSlot(dict)
     def handle_socket_event(self, msg):
@@ -85,7 +68,7 @@ class CBinanceThread(QThread):
     def set_margin(self, data):
         symbol, price, margin, side, a, b, stop_loss, take_profit_1, take_profit_2 = data[0]
         try:
-            self.client.futures_change_leverage(symbol=self.symbol, leverage=int(margin))
+            self.client.futures_change_leverage(symbol=symbol, leverage=int(margin))
         except:
             log_error()
             msg_box(sys.exc_info()[1])

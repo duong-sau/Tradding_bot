@@ -27,8 +27,8 @@ class PNLView(QWidget):
 
         # Tạo nút "Clear Log" để xóa nội dung trong QPlainTextEdit
         self.clear_button = QPushButton("Test")
-        # layout.addWidget(self.clear_button)
-        # self.clear_button.clicked.connect(test)
+        layout.addWidget(self.clear_button)
+        self.clear_button.clicked.connect(test)
 
         # Thiết lập font chữ và cỡ chữ cho QPlainTextEdit
         font = QFont("Consolas", 20)

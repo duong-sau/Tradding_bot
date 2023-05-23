@@ -14,7 +14,7 @@ from connection import register_connections
 
 def handle_exception(exc_type, exc_value, exc_traceback):
     try:
-        error_notification(f"{exc_type} || {exc_traceback} || {exc_traceback}")
+        error_notification(f"{exc_type}\n{exc_value}\n{exc_traceback}")
         log_error()
     except:
         all_log()
@@ -24,7 +24,6 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 sys.excepthook = handle_exception
 
 if __name__ == '__main__':
-    init_log()
     app = QApplication(sys.argv)
     extra = {
         # Font
