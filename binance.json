@@ -1,0 +1,18 @@
+
+{
+  "symbol": "BTCUSDT",
+  "margin": 20,
+  "DCA": [
+    {
+      "symbol": "BTCUSDT",
+      "price": 29500,
+      "margin": 30,
+      "side": "LONG",
+      "a": 0.001,
+      "b": 0.002,
+      "sl": 29000,
+      "tp1": 30000,
+      "tp2": 30100
+    }
+  ]
+}
