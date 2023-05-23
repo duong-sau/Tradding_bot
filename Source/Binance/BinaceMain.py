@@ -1,9 +1,10 @@
 import json
 import sys
+import time
 
 from Source.Binance.Control.BianceThread import CBinanceThread
 from Source.Binance.Control.WebSocketThread import CSocketThread
-from Source.Common.utility import MessageBox
+from Source.utility import MessageBox
 from Source.Communicator.UDPClient import UPDClient
 
 
@@ -28,6 +29,7 @@ if __name__ == '__main__':
     websocket_thread = CSocketThread()
     binance_thread.start()
     websocket_thread.order_trigger_signal.connect(binance_thread.handle_socket_event)
+    time.sleep(1)
     binance_thread.open_order(order_json)
 
     communicator = UPDClient("Binance")

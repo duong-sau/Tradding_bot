@@ -1,12 +1,13 @@
 import sys
 import time
 
+from PyQt5 import QtCore
 from PyQt5.QtCore import QThread
 from binance.client import Client
 
 from Source.Binance import testnet, api_secret, api_key
 from Source.Binance.Control.Controller import Controller
-from Source.Common.utility import MessageBox
+from Source.utility import MessageBox
 from Source.Telegram.TelegramThread import log_error
 
 
@@ -48,6 +49,7 @@ class CBinanceThread(QThread):
             log_error()
             MessageBox(sys.exc_info()[1])
 
+    @QtCore.pyqtSlot(dict)
     def handle_socket_event(self, msg):
         try:
             order_id = msg['i']

@@ -3,7 +3,7 @@ import sys
 from binance import ThreadedWebsocketManager
 
 from Source.Binance import api_secret, api_key, testnet
-from Source.Common.utility import MessageBox
+from Source.utility import MessageBox
 from Source.Communicator.UDPClient import UpdClient
 
 

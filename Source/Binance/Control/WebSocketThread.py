@@ -22,7 +22,7 @@ class CSocketThread(QThread):
         try:
             if message['e'] == 'ORDER_TRADE_UPDATE':
                 self.order_trigger_signal.emit(message['o'])
-            elif message['e'] == 'ORDER_TRADE_UPDATE':
+            elif message['e'] == 'error':
                 error_notification(message)
         except:
             log_error()

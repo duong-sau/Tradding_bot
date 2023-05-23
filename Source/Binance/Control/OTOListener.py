@@ -3,7 +3,7 @@ import sys
 from binance.exceptions import BinanceRequestException, BinanceAPIException
 
 from Source.Binance.Control.Common import open_limit, open_stop_loss, open_take_profit, cancel_order
-from Source.Common.utility import MessageBox
+from Source.utility import MessageBox
 
 
 class OTOListener:
