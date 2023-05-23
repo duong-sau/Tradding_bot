@@ -31,11 +31,11 @@ else:
 # symbol_usdt = [symbol.strip() + 'USDT' for symbol in symbol_usdt]
 #
 # symbol_list = symbol_busd + symbol_usdt
-
-symbol_file = open('symbol.json', mode='r')
-symbol_size = json.load(symbol_file)
-symbol_list = list(symbol_size.keys())
-symbol_file.close()
-
+#
+# symbol_file = open('symbol.json', mode='r')
+# symbol_size = json.load(symbol_file)
+# symbol_list = list(symbol_size.keys())
+# symbol_file.close()
+#
 
 

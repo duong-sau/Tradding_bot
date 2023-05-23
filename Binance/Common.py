@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QMessageBox
 from binance.exceptions import BinanceRequestException, BinanceAPIException
 
 from Binance import symbol_size
-from Telegram.TelegramThread import error_notification
+from Telegram.TelegramThread import error_notification, stop_notification
 
 
 def get_limit_from_parameter(symbol, quantity, price, margin, ps_side):
@@ -111,6 +111,7 @@ def open_stop_loss(client, symbol, quantity, price, side):
         error_code = e.code
         if error_code == -2021:
             force_stop_loss(client, symbol, quantity, side)
+            stop_notification(0, 0)
             return False
         else:
             error = str(sys.exc_info()[1])
