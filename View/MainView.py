@@ -31,6 +31,10 @@ class MainWindow(QMainWindow):
         self.timer.timeout.connect(self.timer_run)
         self.timer.start(1000)
 
+        self.timer2 = QTimer()
+        self.timer2.timeout.connect(self.retry)
+        self.timer2.start(600000)
+
         self.input_view = InputView()
         self.m_textbox = self.input_view.m_textbox
         self.n_textbox = self.input_view.n_textbox
@@ -161,6 +165,16 @@ class MainWindow(QMainWindow):
         self.update_price()
         self.pnl_cal()
         self.update_n_max()
+
+    def retry(self):
+        client_temp = self.client
+        self.client = Client(testnet=testnet)
+        try:
+            if client_temp is None:
+                return
+            client_temp.close_connection()
+        except:
+            print("close client false")
 
     def pnl_cal(self):
         long = self.tx_long.isChecked()
@@ -313,16 +327,16 @@ class MainWindow(QMainWindow):
             self.a.textbox.setText('40')
             self.margin_textbox.textbox.setText('1')
             if self.tx_long.isChecked():
-                self.min_textbox.textbox.setText(str(current_price - 100))
+                self.min_textbox.textbox.setText(str(current_price - 50))
                 self.max_textbox.textbox.setText(str(current_price + 50))
-                self.stop_loss_textbox.textbox.setText(str(current_price - 250))
-                self.take_profit1_textbox.textbox.setText(str(current_price + 250))
-                self.take_profit2_textbox.textbox.setText(str(current_price + 300))
+                self.stop_loss_textbox.textbox.setText(str(current_price - 100))
+                self.take_profit1_textbox.textbox.setText(str(current_price + 100))
+                self.take_profit2_textbox.textbox.setText(str(current_price + 150))
             else:
-                self.min_textbox.textbox.setText(str(current_price + 100))
-                self.max_textbox.textbox.setText(str(current_price + 150))
-                self.stop_loss_textbox.textbox.setText(str(current_price + 300))
-                self.take_profit1_textbox.textbox.setText(str(current_price - 250))
-                self.take_profit2_textbox.textbox.setText(str(current_price - 300))
+                self.min_textbox.textbox.setText(str(current_price + 50))
+                self.max_textbox.textbox.setText(str(current_price + 50))
+                self.stop_loss_textbox.textbox.setText(str(current_price + 100))
+                self.take_profit1_textbox.textbox.setText(str(current_price - 100))
+                self.take_profit2_textbox.textbox.setText(str(current_price - 150))
         except:
             pass

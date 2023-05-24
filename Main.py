@@ -1,5 +1,8 @@
 import sys
+import time
+from threading import Thread
 
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication
 from qt_material import apply_stylesheet
 
@@ -65,11 +68,19 @@ if __name__ == '__main__':
         # exit
         app.exit(0)
     try:
-        error = app.exec()
-        binance_thread.stop()
-        logic_thread.stop()
-        socket_thread.stop()
-        sys.exit(0)
+        view_thread = Thread(target=app.exec)
+        view_thread.start()
+        while True:
+            time.sleep(10)
+            temp_socket = socket_thread
+            temp_socket.stop()
+            temp_socket.quit()
+            socket_thread = CSocketThread()
+
+        # binance_thread.stop()
+        # logic_thread.stop()
+        # socket_thread.stop()
+        # sys.exit(0)
     except:
         log_error()
         sys.exit(0)

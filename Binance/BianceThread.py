@@ -2,7 +2,7 @@ import sys
 import time
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import pyqtSignal, QThread
+from PyQt5.QtCore import pyqtSignal, QThread, QTimer
 from binance.client import Client
 
 from Binance import api_key, api_secret, testnet
@@ -19,25 +19,30 @@ class CBinanceThread(QThread):
 
     def __init__(self):
         super(CBinanceThread, self).__init__()
-        self.client = None
+        self.client = Client(api_key, api_secret, testnet=testnet)
         self.controller_list = []
         self.running = True
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.reconnect)
+        self.timer.start(60000)
 
-    def retry(self):
+    def reconnect(self):
+        client_temp = self.client
         self.client = Client(api_key, api_secret, testnet=testnet)
+        try:
+            print('client reconnect')
+            if client_temp is None:
+                return
+            client_temp.close_connection()
+        except:
+            print("close client fail")
 
-    def run(self):
-        while self.running:
-            try:
-                self.retry()
-                self.client.ping()
-            except:
-                log_error()
-                time.sleep(5)
+    def run(self) -> None:
+        print('Client is still running')
+        time.sleep(1)
 
     def stop(self):
         self.running = False
-
 
     @QtCore.pyqtSlot(dict)
     def handle_socket_event(self, msg):
@@ -50,10 +55,6 @@ class CBinanceThread(QThread):
                     self.controller_list.remove(controller)
         except:
             log_error()
-
-    @QtCore.pyqtSlot(str)
-    def update_symbol(self, symbol):
-        self.symbol = symbol
 
     @QtCore.pyqtSlot(list)
     def open_order(self, datas):

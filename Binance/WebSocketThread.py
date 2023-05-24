@@ -1,6 +1,6 @@
 import time
 
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal, QTimer
 from binance import ThreadedWebsocketManager
 
 from Binance import api_key, api_secret, testnet
@@ -13,10 +13,10 @@ class CSocketThread(QThread):
     def __init__(self, parent=None):
         super(CSocketThread, self).__init__(parent)
         self.conn_key, self.socket = None, None
-        self.running = True
         self.socket = ThreadedWebsocketManager(api_secret=api_secret, api_key=api_key, testnet=testnet)
         self.socket.start()
         self.conn_key = self.socket.start_futures_user_socket(callback=self.process_message)
+        self.running = True
 
     def process_message(self, message):
         try:
@@ -29,13 +29,10 @@ class CSocketThread(QThread):
 
     def run(self) -> None:
         while self.running:
-            time.sleep(1)
-            socket_running = self.socket.is_alive()
-            if socket_running:
-                print('socket is running')
-            else:
-                print('socket not running')
+            time.sleep(10)
+            print('socket is running')
 
     def stop(self):
         self.running = False
+        self.socket.stop_socket(self.conn_key)
         self.socket.stop()
