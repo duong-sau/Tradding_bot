@@ -5,7 +5,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal, QThread, QTimer
 from binance.client import Client
 
-from Binance import api_key, api_secret, testnet
+from Binance import api_key, api_secret, testnet, retry_client
 from Binance.Common import confirm_order
 from Binance.Controller import Controller
 from Telegram.TelegramThread import log_error
@@ -24,7 +24,7 @@ class CBinanceThread(QThread):
         self.running = True
         self.timer = QTimer()
         self.timer.timeout.connect(self.reconnect)
-        self.timer.start(60000)
+        self.timer.start(retry_client*1000)
 
     def reconnect(self):
         client_temp = self.client
@@ -49,8 +49,9 @@ class CBinanceThread(QThread):
         try:
             order_id = msg['i']
             event = msg['X']
+            price = msg['p']
             for controller in self.controller_list:
-                controller.handel(self.client, order_id, event)
+                controller.handel(self.client, order_id, event, price)
                 if len(controller.position_list) == 0:
                     self.controller_list.remove(controller)
         except:

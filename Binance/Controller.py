@@ -23,16 +23,16 @@ class Controller:
             position.make_limit_order()
         start_notification(self.id)
 
-    def handel(self, client, order_id, event):
+    def handel(self, client, order_id, event, price):
         for position in self.position_list:
             if order_id in position.get_order_ids():
                 position.set_client(client)
-                self.control(order_id, event, position)
+                self.control(order_id, event, price, position)
 
     def remove_position(self, position):
         self.position_list.remove(position)
 
-    def control(self, order_id, event, position):
+    def control(self, order_id, event, price, position):
         '''
         TELEGRAM
         '''
@@ -44,7 +44,7 @@ class Controller:
             elif order_id == position.sl1_order:
                 stop_notification(self.id, self.position_list.index(position) + 1)
             elif order_id == position.limit_order:
-                limit_notification(self.id, self.position_list.index(position) + 1)
+                limit_notification(self.id, self.position_list.index(position) + 1, price)
         """
         Control
         """

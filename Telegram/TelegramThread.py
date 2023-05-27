@@ -27,8 +27,8 @@ def stop_notification(control_id, position_num):
     tele_notification(f'Stop loss    thành công {position_num}/{control_id}')
 
 
-def limit_notification(control_id, position_num):
-    tele_notification(f'Khớp limit thành công  {position_num}/{control_id}')
+def limit_notification(control_id, position_num, price):
+    tele_notification(f'Khớp limit thành công  {position_num}/{control_id}  tại {price}')
 
 
 def start_notification(control_id):

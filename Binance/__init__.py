@@ -20,7 +20,7 @@ elif testnet == 'False':
 else:
     testnet = 'error'
 
-
-
-
-
+connect = config['CONNECT']
+retry_client = connect['client']
+retry_client = float(retry_client)
+retry_socket = float(connect['socket'])

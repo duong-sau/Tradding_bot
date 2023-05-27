@@ -1,13 +1,10 @@
 import sys
-import threading
-from multiprocessing import Process, Queue
 
 from PyQt5.QtWidgets import QApplication
 from qt_material import apply_stylesheet
 
 from Binance.BianceThread import CBinanceThread
-from Test.SocketProcess import create_socket
-from Binance.WebSocketThread import CSocketThread
+from Binance.Websocket.WebSocketThread import CSocketThread
 from Logic.CLogicThread import CLogicThread
 from Telegram.TelegramThread import log_error, error_notification, all_log
 from View.MainView import MainWindow
@@ -25,26 +22,6 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 sys.excepthook = handle_exception
 
 if __name__ == '__main__':
-    queue = Queue()
-    g_process = None
-    process_name = 0
-
-
-    def reconnect_websocket():
-        print('start socket')
-        global process_name, g_process
-        process = Process(target=create_socket, args=(process_name, queue,))
-        process.start()
-        process_name += 1
-        temp = g_process
-        g_process = process
-        if temp is None:
-            return
-        temp.terminate()
-        temp.join()
-        temp.close()
-
-
     app = QApplication(sys.argv)
     extra = {
         # Font
@@ -60,13 +37,8 @@ if __name__ == '__main__':
     # binance thread
     binance_thread = CBinanceThread()
 
-
-    def socket(message):
-        print(message)
-
-
     # socket thread
-    socket_thread = CSocketThread(socket)
+    socket_thread = CSocketThread()
 
     # Window thread
     mainWindow = MainWindow()
@@ -93,22 +65,11 @@ if __name__ == '__main__':
         # exit
         app.exit(0)
     try:
-
-        reconnect_websocket()
-
-        timer = threading.Timer(10, reconnect_websocket)
-        timer.start()
-
-        while True:
-            data = queue.get()
-            if data is None:
-                break
-            print("Received:", data)
-        # Run app
-        app.exec()
+        error = app.exec()
         binance_thread.stop()
         logic_thread.stop()
         socket_thread.stop()
+        error_notification(error)
         sys.exit(0)
     except:
         log_error()

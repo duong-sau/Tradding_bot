@@ -15,7 +15,6 @@ elif testnet == 'False':
 else:
     testnet = 'error'
 
-
 symbol_file = open('symbol.json', mode='r')
 symbol_size = json.load(symbol_file)
 symbol_list = list(symbol_size.keys())
@@ -26,3 +25,7 @@ def get_tick_price(symbol):
     symbol_data = symbol_size
     con = symbol_data[symbol]
     return con[0], con[1]
+
+
+retry_view = config['CONNECT']['view']
+retry_view = float(retry_view)

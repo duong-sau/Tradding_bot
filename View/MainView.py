@@ -8,7 +8,7 @@ from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, dlFIBONACCI, \
     dsFIBONACCI, uaFIBONACCI, dDISTANCE
 from Common.m_common import m_math_dict
 from Common.n_common import n_math_dict
-from View import testnet, symbol_list, get_tick_price
+from View import testnet, symbol_list, get_tick_price, retry_view
 from View.a_common.MsgBox import msg_box
 from View.addvance_view import AdvanceView
 from View.combobox_view import ComboboxView
@@ -33,7 +33,7 @@ class MainWindow(QMainWindow):
 
         self.timer2 = QTimer()
         self.timer2.timeout.connect(self.retry)
-        self.timer2.start(600000)
+        self.timer2.start(retry_view*1000)
 
         self.input_view = InputView()
         self.m_textbox = self.input_view.m_textbox
