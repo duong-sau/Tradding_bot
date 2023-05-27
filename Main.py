@@ -1,12 +1,12 @@
 import sys
-import time
-from threading import Thread
+import threading
+from multiprocessing import Process, Queue
 
-from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication
 from qt_material import apply_stylesheet
 
 from Binance.BianceThread import CBinanceThread
+from Test.SocketProcess import create_socket
 from Binance.WebSocketThread import CSocketThread
 from Logic.CLogicThread import CLogicThread
 from Telegram.TelegramThread import log_error, error_notification, all_log
@@ -25,6 +25,26 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 sys.excepthook = handle_exception
 
 if __name__ == '__main__':
+    queue = Queue()
+    g_process = None
+    process_name = 0
+
+
+    def reconnect_websocket():
+        print('start socket')
+        global process_name, g_process
+        process = Process(target=create_socket, args=(process_name, queue,))
+        process.start()
+        process_name += 1
+        temp = g_process
+        g_process = process
+        if temp is None:
+            return
+        temp.terminate()
+        temp.join()
+        temp.close()
+
+
     app = QApplication(sys.argv)
     extra = {
         # Font
@@ -40,8 +60,13 @@ if __name__ == '__main__':
     # binance thread
     binance_thread = CBinanceThread()
 
+
+    def socket(message):
+        print(message)
+
+
     # socket thread
-    socket_thread = CSocketThread()
+    socket_thread = CSocketThread(socket)
 
     # Window thread
     mainWindow = MainWindow()
@@ -68,19 +93,23 @@ if __name__ == '__main__':
         # exit
         app.exit(0)
     try:
-        view_thread = Thread(target=app.exec)
-        view_thread.start()
-        while True:
-            time.sleep(10)
-            temp_socket = socket_thread
-            temp_socket.stop()
-            temp_socket.quit()
-            socket_thread = CSocketThread()
 
-        # binance_thread.stop()
-        # logic_thread.stop()
-        # socket_thread.stop()
-        # sys.exit(0)
+        reconnect_websocket()
+
+        timer = threading.Timer(10, reconnect_websocket)
+        timer.start()
+
+        while True:
+            data = queue.get()
+            if data is None:
+                break
+            print("Received:", data)
+        # Run app
+        app.exec()
+        binance_thread.stop()
+        logic_thread.stop()
+        socket_thread.stop()
+        sys.exit(0)
     except:
         log_error()
         sys.exit(0)

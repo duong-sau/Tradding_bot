@@ -10,12 +10,12 @@ from Telegram.TelegramThread import log_error, error_notification
 class CSocketThread(QThread):
     order_trigger_signal = pyqtSignal(dict)
 
-    def __init__(self, parent=None):
+    def __init__(self, call_back, parent=None):
         super(CSocketThread, self).__init__(parent)
         self.conn_key, self.socket = None, None
-        self.socket = ThreadedWebsocketManager(api_secret=api_secret, api_key=api_key, testnet=testnet)
-        self.socket.start()
-        self.conn_key = self.socket.start_futures_user_socket(callback=self.process_message)
+        # self.socket = ThreadedWebsocketManager(api_secret=api_secret, api_key=api_key, testnet=testnet)
+        # self.socket.start()
+        # self.conn_key = self.socket.start_futures_user_socket(callback=call_back)
         self.running = True
 
     def process_message(self, message):
@@ -34,5 +34,5 @@ class CSocketThread(QThread):
 
     def stop(self):
         self.running = False
-        self.socket.stop_socket(self.conn_key)
-        self.socket.stop()
+        # self.socket.stop_socket(self.conn_key)
+        # self.socket.stop()
