@@ -1,3 +1,4 @@
+import multiprocessing
 import sys
 
 from PyQt5.QtWidgets import QApplication
@@ -22,6 +23,7 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 sys.excepthook = handle_exception
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support()
     app = QApplication(sys.argv)
     extra = {
         # Font
