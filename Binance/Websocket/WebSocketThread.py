@@ -26,6 +26,7 @@ class CSocketThread(QThread):
 
     def __init__(self) -> None:
         super().__init__()
+        self.running = True
         thread = threading.Thread(target=self.get_data)
         thread.start()
         self.process_name = 0
@@ -42,7 +43,7 @@ class CSocketThread(QThread):
             log_error()
 
     def get_data(self):
-        while True:
+        while self.running:
             data = queue.get()
             if data is None:
                 break
@@ -50,7 +51,7 @@ class CSocketThread(QThread):
             self.process_message(data)
 
     def run(self) -> None:
-        while True:
+        while self.running:
             # start process
             print('start socket')
             local_parent, local_child = Pipe()
@@ -76,6 +77,8 @@ class CSocketThread(QThread):
                 print(f'run socket {i}')
                 time.sleep(retry_socket)
 
+    def stop(self):
+        self.running = False
 
 class WebSocketProcess(QThread):
     def __init__(self, call_back) -> None:

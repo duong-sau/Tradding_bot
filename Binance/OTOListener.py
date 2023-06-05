@@ -39,10 +39,12 @@ class OTOListener:
         try:
             quantity = round(self.a + self.b, 5)
             self.limit_order = open_limit(self.client, self.symbol, quantity, self.price, self.margin, self.side)
+            return True
         except(BinanceRequestException, BinanceAPIException):
             error = str(sys.exc_info()[1])
             msg_box(error)
             self.destroy()
+            return False
 
     def handel_limit(self):
         result_1 = self.make_stop_loss_1_order()

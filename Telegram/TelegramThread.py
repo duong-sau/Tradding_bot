@@ -11,6 +11,8 @@ def tele_notification(content):
     try:
         bot = telebot.TeleBot(token)
         bot.send_message(chat_id, content)
+        bot.stop_bot()
+        bot.close()
     except:
         all_log()
 

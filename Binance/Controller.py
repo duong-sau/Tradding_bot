@@ -20,7 +20,8 @@ class Controller:
             position = OTOListener(symbol, price, margin, side, a, b, sl, tp1, tp2)
             position.set_client(client)
             self.position_list.append(position)
-            position.make_limit_order()
+            if not position.make_limit_order():
+                self.position_list.remove(position)
         start_notification(self.id)
 
     def handel(self, client, order_id, event, price):
@@ -55,7 +56,10 @@ class Controller:
                 self.remove_position(position)
         elif event == ORDER_STATUS_FILLED or event == ORDER_STATUS_EXPIRED:
             if order_id == position.limit_order:
-                position.handel_limit()
+                if position.sl == -1:
+                    self.remove_position(position)
+                else:
+                    position.handel_limit()
             elif order_id == position.tp1_order:
                 position.handle_take_profit_1()
             elif order_id == position.tp2_order:

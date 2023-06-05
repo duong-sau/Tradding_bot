@@ -1,13 +1,19 @@
+import asyncio
+import threading
+import time
+
+import timer
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout
-from binance import Client
+from binance import Client, AsyncClient
 from binance.helpers import round_step_size
 
 from Common.common import MCN, MCNT, MNT, DISTANCE, NORMAL, dlFIBONACCI, \
     dsFIBONACCI, uaFIBONACCI, dDISTANCE
 from Common.m_common import m_math_dict
 from Common.n_common import n_math_dict
+from Telegram.TelegramThread import log_error
 from View import testnet, symbol_list, get_tick_price, retry_view
 from View.a_common.MsgBox import msg_box
 from View.addvance_view import AdvanceView
@@ -27,9 +33,11 @@ class MainWindow(QMainWindow):
 
         self.PricePrecision = 0.01
         self.QuantityPrecision = 0.001
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.timer_run)
-        self.timer.start(1000)
+        # self.timer = QTimer()
+        # self.timer.timeout.connect(self.timer_run)
+        # self.timer.start(1000)
+        self.runner_timer = threading.Thread(target=self.timer_run)
+        self.runner_timer.start()
 
         self.timer2 = QTimer()
         self.timer2.timeout.connect(self.retry)
@@ -56,6 +64,7 @@ class MainWindow(QMainWindow):
         self.take_profit2_textbox = self.advance_view.take_profit2_textbox
         self.b = self.advance_view.b
         self.take_profit2_percent = self.advance_view.take_profit2_percent
+        self.is_tp_sl = self.advance_view.is_tp_sl
 
         self.control_view = ControlView()
         self.long_button = self.control_view.long_button
@@ -147,11 +156,14 @@ class MainWindow(QMainWindow):
         self.open_order_signal.emit(data)
 
     def update_price(self):
-        selected_symbol = self.symbol_select.currentText()
-        ticker = self.client.futures_mark_price(symbol=selected_symbol)
-        last_ticker = self.client.futures_symbol_ticker(symbol=selected_symbol)
-        self.mark_price_label.setText(ticker['markPrice'])
-        self.current_price_label.setText(last_ticker['price'])
+        try:
+            selected_symbol = self.symbol_select.currentText()
+            ticker = self.client.futures_mark_price(symbol=selected_symbol)
+            last_ticker = self.client.futures_symbol_ticker(symbol=selected_symbol)
+            self.mark_price_label.setText(ticker['markPrice'])
+            self.current_price_label.setText(last_ticker['price'])
+        except:
+            log_error()
 
     def init_symbols(self):
         self.symbol_select.addItems(symbol_list)
@@ -162,9 +174,16 @@ class MainWindow(QMainWindow):
         self.update_symbol_signal.emit(symbol)
 
     def timer_run(self):
-        self.update_price()
-        self.pnl_cal()
-        self.update_n_max()
+        time.sleep(5)
+        while True:
+            try:
+                time.sleep(0.25)
+                self.update_price()
+                self.pnl_cal()
+                self.update_n_max()
+            except:
+                log_error()
+
 
     def retry(self):
         client_temp = self.client
@@ -202,19 +221,34 @@ class MainWindow(QMainWindow):
             pass
 
     def get_value(self):
-        data = {
-            'm_list': self.calculator_m(),
-            'n_list': self.calculator_n(),
-            'min': self.min_textbox.get_value(),
-            'max': self.max_textbox.get_value(),
-            'sl': self.stop_loss_textbox.get_value(),
-            'tp1': self.take_profit1_textbox.get_value(),
-            'a': self.a.get_value() / 100,
-            'tp2': self.take_profit2_textbox.get_value(),
-            'b': self.b.get_value() / 100,
-            'symbol': self.symbol_select.currentText(),
-            'margin': self.margin_textbox.get_value()
-        }
+        if self.is_tp_sl.isChecked():
+            data = {
+                'm_list': self.calculator_m(),
+                'n_list': self.calculator_n(),
+                'min': self.min_textbox.get_value(),
+                'max': self.max_textbox.get_value(),
+                'sl': self.stop_loss_textbox.get_value(),
+                'tp1': self.take_profit1_textbox.get_value(),
+                'a': self.a.get_value() / 100,
+                'tp2': self.take_profit2_textbox.get_value(),
+                'b': self.b.get_value() / 100,
+                'symbol': self.symbol_select.currentText(),
+                'margin': self.margin_textbox.get_value()
+            }
+        else:
+            data = {
+                'm_list': self.calculator_m(),
+                'n_list': self.calculator_n(),
+                'min': self.min_textbox.get_value(),
+                'max': self.max_textbox.get_value(),
+                'sl': -1,
+                'tp1': -1,
+                'a': self.a.get_value() / 100,
+                'tp2': -1,
+                'b': self.b.get_value() / 100,
+                'symbol': self.symbol_select.currentText(),
+                'margin': self.margin_textbox.get_value()
+            }
         return data
 
     def calculator_m(self):
@@ -300,6 +334,7 @@ class MainWindow(QMainWindow):
     @QtCore.pyqtSlot(float, float)
     def update_pnl(self, pnl, sum_pnl):
         self.pnl_view.update_pnl(pnl, sum_pnl)
+
 
     # def test(self):
     #     try:

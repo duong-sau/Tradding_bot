@@ -65,7 +65,13 @@ class CBinanceThread(QThread):
         controller = Controller()
         controller.add_position(self.client, datas)
         self.controller_list.append(controller)
-        msg_box("Đặt lệnh xong", "Thành công")
+        if len(controller.position_list) == 0:
+            msg_box("DAC không có lệnh nào", "Thất bại")
+            self.controller_list.remove(controller)
+        else:
+            msg_box("Đặt lệnh xong", "Thành công")
+
+
 
     def set_margin(self, data):
         symbol, price, margin, side, a, b, stop_loss, take_profit_1, take_profit_2 = data[0]
